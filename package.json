@@ -1,0 +1,24 @@
+{
+  "name": "lab2-library",
+  "version": "1.0.0",
+  "description": "Task 1 demo application",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "src",
+    "demaTask1.js"
+  ],
+  "scripts": {
+    "start": "node demaTask1.js",
+    "example": "npm --prefix example run start",
+    "test": "echo \"No tests yet\""
+  },
+  "keywords": [
+    "generator",
+    "iterator",
+    "round-robin"
+  ],
+  "author": "Олексій Михайлик",
+  "license": "MIT",
+  "type": "commonjs"
+}

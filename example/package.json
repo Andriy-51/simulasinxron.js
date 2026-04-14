@@ -1,0 +1,12 @@
+{
+  "name": "lab2-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example project that runs the local demo package",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Олексій Михайлик",
+  "license": "MIT"
+}

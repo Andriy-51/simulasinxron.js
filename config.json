@@ -1,0 +1,29 @@
+{
+  "runtime": {
+    "reportPath": "reports",
+    "snapshotPath": "snapshots",
+    "queueConcurrency": 3,
+    "queueRateLimit": 5,
+    "queueRateWindowMs": 1000,
+    "monitorRefreshMs": 500
+  },
+  "authProxy": {
+    "type": "oauth",
+    "apiKey": "demo-api-key",
+    "token": "jwt-demo-token",
+    "accessToken": "oauth-demo-token",
+    "refreshToken": "refresh-demo-token"
+  },
+  "logging": {
+    "level": "INFO",
+    "destination": "console"
+  },
+  "demo": {
+    "batchSize": 8,
+    "roundRobinCycles": 12,
+    "clients": 4,
+    "requestsPerClient": 5,
+    "vipRate": 0.25,
+    "totalRequests": 40
+  }
+}

@@ -7,6 +7,10 @@ const { chunkAsyncIterable, processLargeData, createEventBasedStream, consumeEve
 const { ReactiveEmitter, createReactiveChannel, createObservable } = require("./reactive/reactiveCommunication");
 const { ApiKeyStrategy, JwtStrategy, OAuthStrategy, createAuthStrategy, createFakeApiService, createAuthProxy, runAuthProxyDemo } = require("./proxy/authProxy");
 const { createLogSink, createLoggingDecorator, runLoggingDecoratorDemo } = require("./decorators/loggingDecorator");
+const { loadConfig, DEFAULT_CONFIG } = require("./system/config");
+const { SystemMonitor } = require("./system/monitor");
+const { createRoundRobinState, saveSnapshot, loadSnapshot } = require("./system/snapshot");
+const { runPlatformDemo } = require("./platform/simulationPlatform");
 
 module.exports = {
   roundRobinGenerator,
@@ -33,7 +37,14 @@ module.exports = {
   runAuthProxyDemo,
   createLogSink,
   createLoggingDecorator,
-  runLoggingDecoratorDemo
+  runLoggingDecoratorDemo,
+  loadConfig,
+  DEFAULT_CONFIG,
+  SystemMonitor,
+  createRoundRobinState,
+  saveSnapshot,
+  loadSnapshot,
+  runPlatformDemo
 };
 
 // additional exports for coursework demo and new modules

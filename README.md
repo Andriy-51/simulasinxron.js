@@ -17,6 +17,10 @@
 - `server/queue.js` - менеджер пріоритетної черги і метрик
 - `proxy/authProxy.js` - auth proxy для API з політиками доступу
 - `decorators/loggingDecorator.js` - logging decorator з рівнями логування
+- `system/config.js` - завантаження конфігурації з `config.json` або env
+- `system/monitor.js` - live dashboard для метрик платформи
+- `system/snapshot.js` - snapshot / restore стану черги та round-robin
+- `platform/simulationPlatform.js` - platform demo з моніторингом і resume
 - `simulation/requestGenerator.js` - генерація вхідного потоку запитів
 - `examples/courseworkMenu.js` - інтерактивне меню з усіма прикладами
 - `examples/helpdeskScenario.js` - практичний сценарій helpdesk
@@ -42,6 +46,16 @@
 - друкувати аргументи, результат і тривалість виконання;
 - писати логи в console, file або memory sink;
 - вмикати режим only-errors.
+
+### Simulation platform
+
+Файл [src/platform/simulationPlatform.js](src/platform/simulationPlatform.js) об'єднує одразу кілька модулів у платформу:
+
+- завантажує runtime-параметри з [config.json](config.json) або змінних середовища;
+- збирає live-метрики в [system/monitor.js](src/system/monitor.js);
+- зберігає snapshot стану черги і round-robin у [system/snapshot.js](src/system/snapshot.js);
+- відновлює симуляцію з того самого місця;
+- записує фінальний звіт у файл.
 
 ## UI/UX для демонстрації
 
@@ -97,13 +111,19 @@ npm run auth-proxy-demo
 npm run logging-decorator-demo
 ```
 
-### 5. Серверна симуляція запитів
+### 5. Simulation platform demo
+
+```bash
+npm run platform-demo
+```
+
+### 6. Серверна симуляція запитів
 
 ```bash
 node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json
 ```
 
-### 6. Тест
+### 7. Тест
 
 ```bash
 node tests/smoke-asyncMap.js
@@ -136,7 +156,7 @@ node tests/smoke-asyncMap.js
 
 Якщо треба коротко пояснити суть роботи викладачу, можна сказати так:
 
-> У курсoвій зібрано набір асинхронних механізмів JavaScript і показано їх на кількох рівнях: як окремі навчальні модулі, як практичну helpdesk-систему з чергою, пріоритетами, SLA і метриками, а також як реалістичні інтеграційні приклади з auth proxy і logging decorator. Тобто це не тільки демонстрація синтаксису, а модель сервісного процесу та інфраструктурних шарів.
+> У курсoвій зібрано набір асинхронних механізмів JavaScript і показано їх на кількох рівнях: як окремі навчальні модулі, як практичну helpdesk-систему з чергою, пріоритетами, SLA і метриками, як реалістичні інтеграційні приклади з auth proxy і logging decorator, а також як config-driven simulation platform з live dashboard, snapshot/resume і зовнішньою конфігурацією. Тобто це не тільки демонстрація синтаксису, а модель сервісного процесу та інфраструктурних шарів.
 
 ## Структура проекту
 
@@ -152,8 +172,10 @@ src/
 ├── queue/
 ├── reactive/
 ├── proxy/
+├── platform/
 ├── server/
 ├── simulation/
+├── system/
 ├── streams/
 └── utils/
 ```

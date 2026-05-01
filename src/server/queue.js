@@ -17,6 +17,35 @@ class QueueManager {
     });
   }
 
+  snapshot() {
+    return {
+      concurrency: this.concurrency,
+      totalRequests: this.totalRequests,
+      active: this.active,
+      completed: this.completed,
+      peakQueueSize: this.peakQueueSize,
+      queue: this.queue.map((request) => ({ ...request })),
+      metrics: this.metrics.map((item) => ({ ...item }))
+    };
+  }
+
+  restore(snapshot) {
+    if (!snapshot || !Array.isArray(snapshot.queue) || !Array.isArray(snapshot.metrics)) {
+      throw new Error("invalid queue snapshot");
+    }
+
+    this.concurrency = Math.max(1, snapshot.concurrency || this.concurrency);
+    this.totalRequests = snapshot.totalRequests ?? this.totalRequests;
+    this.active = snapshot.active || 0;
+    this.completed = snapshot.completed || 0;
+    this.peakQueueSize = snapshot.peakQueueSize || 0;
+    this.queue = snapshot.queue.map((request) => ({ ...request }));
+    this.metrics = snapshot.metrics.map((item) => ({ ...item }));
+    this.done = new Promise((resolve) => {
+      this.doneResolver = resolve;
+    });
+  }
+
   enqueue(request) {
     this.queue.push(request);
     this.queue.sort((a, b) => {

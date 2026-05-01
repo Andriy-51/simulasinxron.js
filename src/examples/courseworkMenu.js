@@ -12,6 +12,7 @@ const {
     createObservable,
     runAuthProxyDemo,
     runLoggingDecoratorDemo,
+    runPlatformDemo,
 } = require("../");
 const { runServerSimulation } = require("../../serverSimulator");
 const { runHelpdeskCaseStudy } = require("./helpdeskScenario");
@@ -48,6 +49,13 @@ async function runLoggingDecoratorSection(monitor) {
     const startedAt = Date.now();
     await runLoggingDecoratorDemo();
     monitor.record("Logging decorator", startedAt);
+}
+
+async function runPlatformSection(monitor) {
+    section(14, "Simulation platform");
+    const startedAt = Date.now();
+    await runPlatformDemo();
+    monitor.record("Simulation platform", startedAt);
 }
 
 function createMonitor() {
@@ -308,6 +316,7 @@ async function runInteractiveMenu() {
                     ["11", "Helpdesk case study"],
                     ["12", "Auth proxy for API service"],
                     ["13", "Logging decorator"],
+                    ["14", "Simulation platform"],
                     ["0", "Exit"]
                 ],
                 chalk.cyan
@@ -317,6 +326,7 @@ async function runInteractiveMenu() {
                 "Press 11 to show the realistic helpdesk scenario with SLA metrics.",
                 "Use 12 for an API proxy that injects credentials and renews tokens.",
                 "Use 13 for the logging decorator with levels and timing.",
+                "Use 14 for the config-driven platform with snapshot/resume and dashboard.",
                 "Use 10 to show server throughput and priority handling.",
                 "Use 8 for the full polished demo."
             ], chalk.whiteBright);
@@ -363,6 +373,8 @@ async function runInteractiveMenu() {
                 await runAuthProxySection(monitor);
             } else if (choice === "13") {
                 await runLoggingDecoratorSection(monitor);
+            } else if (choice === "14") {
+                await runPlatformSection(monitor);
             } else {
                 console.log("Unknown option, try again.");
                 continue;

@@ -13,6 +13,8 @@ const {
     runAuthProxyDemo,
     runLoggingDecoratorDemo,
     runPlatformDemo,
+    runQueueComparisonDemo,
+    runChaosEngineeringDemo,
 } = require("../");
 const { runServerSimulation } = require("../../serverSimulator");
 const { runHelpdeskCaseStudy } = require("./helpdeskScenario");
@@ -56,6 +58,20 @@ async function runPlatformSection(monitor) {
     const startedAt = Date.now();
     await runPlatformDemo();
     monitor.record("Simulation platform", startedAt);
+}
+
+async function runQueueComparisonSection(monitor) {
+    section(15, "Queue strategy comparison");
+    const startedAt = Date.now();
+    await runQueueComparisonDemo();
+    monitor.record("Queue comparison", startedAt);
+}
+
+async function runChaosSection(monitor) {
+    section(16, "Chaos engineering");
+    const startedAt = Date.now();
+    await runChaosEngineeringDemo();
+    monitor.record("Chaos engineering", startedAt);
 }
 
 function createMonitor() {
@@ -317,6 +333,8 @@ async function runInteractiveMenu() {
                     ["12", "Auth proxy for API service"],
                     ["13", "Logging decorator"],
                     ["14", "Simulation platform"],
+                    ["15", "Queue strategy comparison"],
+                    ["16", "Chaos engineering"],
                     ["0", "Exit"]
                 ],
                 chalk.cyan
@@ -327,6 +345,8 @@ async function runInteractiveMenu() {
                 "Use 12 for an API proxy that injects credentials and renews tokens.",
                 "Use 13 for the logging decorator with levels and timing.",
                 "Use 14 for the config-driven platform with snapshot/resume and dashboard.",
+                "Use 15 to compare priority queue against FIFO with JSON analytics.",
+                "Use 16 to show injected faults and recovery under chaos testing.",
                 "Use 10 to show server throughput and priority handling.",
                 "Use 8 for the full polished demo."
             ], chalk.whiteBright);
@@ -375,6 +395,10 @@ async function runInteractiveMenu() {
                 await runLoggingDecoratorSection(monitor);
             } else if (choice === "14") {
                 await runPlatformSection(monitor);
+            } else if (choice === "15") {
+                await runQueueComparisonSection(monitor);
+            } else if (choice === "16") {
+                await runChaosSection(monitor);
             } else {
                 console.log("Unknown option, try again.");
                 continue;

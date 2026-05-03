@@ -2,15 +2,17 @@ const { logLine } = require("../logs/logger");
 const { now } = require("../utils/delay");
 
 class QueueManager {
-  constructor({ concurrency, totalRequests, processRequest }) {
+  constructor({ concurrency, totalRequests, processRequest, strategy = "priority" }) {
     this.concurrency = Math.max(1, concurrency);
     this.totalRequests = totalRequests;
     this.processRequest = processRequest;
+    this.strategy = strategy;
     this.queue = [];
     this.active = 0;
     this.metrics = [];
     this.peakQueueSize = 0;
     this.completed = 0;
+    this._queueOrderCounter = 0;
     this.doneResolver = null;
     this.done = new Promise((resolve) => {
       this.doneResolver = resolve;
@@ -21,9 +23,11 @@ class QueueManager {
     return {
       concurrency: this.concurrency,
       totalRequests: this.totalRequests,
+      strategy: this.strategy,
       active: this.active,
       completed: this.completed,
       peakQueueSize: this.peakQueueSize,
+      queueOrderCounter: this._queueOrderCounter,
       queue: this.queue.map((request) => ({ ...request })),
       metrics: this.metrics.map((item) => ({ ...item }))
     };
@@ -36,9 +40,11 @@ class QueueManager {
 
     this.concurrency = Math.max(1, snapshot.concurrency || this.concurrency);
     this.totalRequests = snapshot.totalRequests ?? this.totalRequests;
+    this.strategy = snapshot.strategy || this.strategy;
     this.active = snapshot.active || 0;
     this.completed = snapshot.completed || 0;
     this.peakQueueSize = snapshot.peakQueueSize || 0;
+    this._queueOrderCounter = snapshot.queueOrderCounter || 0;
     this.queue = snapshot.queue.map((request) => ({ ...request }));
     this.metrics = snapshot.metrics.map((item) => ({ ...item }));
     this.done = new Promise((resolve) => {
@@ -46,14 +52,26 @@ class QueueManager {
     });
   }
 
-  enqueue(request) {
-    this.queue.push(request);
+  _sortQueue() {
+    const strategy = String(this.strategy || "priority").toLowerCase();
+
     this.queue.sort((a, b) => {
+      if (strategy === "fifo") {
+        return (a.__queueOrder || 0) - (b.__queueOrder || 0);
+      }
+
       if (b.priority !== a.priority) {
         return b.priority - a.priority;
       }
-      return a.sequence - b.sequence;
+
+      return (a.__queueOrder || 0) - (b.__queueOrder || 0);
     });
+  }
+
+  enqueue(request) {
+    const entry = { ...request, __queueOrder: this._queueOrderCounter += 1 };
+    this.queue.push(entry);
+    this._sortQueue();
 
     if (this.queue.length > this.peakQueueSize) {
       this.peakQueueSize = this.queue.length;
@@ -73,10 +91,13 @@ class QueueManager {
     const processingTimeMs = await (processRequest || this.processRequest)(request);
 
     this.metrics.push({
+      requestId: request.sequence,
       sequence: request.sequence,
       waitingTimeMs,
       processingTimeMs,
-      priority: request.priority
+      priority: request.priority,
+      deadlineMs: request.deadlineMs ?? null,
+      strategy: this.strategy
     });
 
     this.completed += 1;
@@ -121,7 +142,8 @@ class QueueManager {
       avgProcessingMs: processed === 0 ? 0 : totalProcessing / processed,
       processed,
       vipProcessed,
-      peakQueueSize: this.peakQueueSize
+      peakQueueSize: this.peakQueueSize,
+      strategy: this.strategy
     };
   }
 }

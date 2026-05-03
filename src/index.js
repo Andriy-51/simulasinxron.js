@@ -11,6 +11,8 @@ const { loadConfig, DEFAULT_CONFIG } = require("./system/config");
 const { SystemMonitor } = require("./system/monitor");
 const { createRoundRobinState, saveSnapshot, loadSnapshot } = require("./system/snapshot");
 const { runPlatformDemo } = require("./platform/simulationPlatform");
+const { buildWorkload, compareQueueStrategies, runQueueComparisonDemo } = require("./analysis/queueComparison");
+const { createFaultInjector, runWithRetry, runChaosEngineeringDemo } = require("./chaos/faultInjection");
 
 module.exports = {
   roundRobinGenerator,
@@ -44,7 +46,13 @@ module.exports = {
   createRoundRobinState,
   saveSnapshot,
   loadSnapshot,
-  runPlatformDemo
+  runPlatformDemo,
+  buildWorkload,
+  compareQueueStrategies,
+  runQueueComparisonDemo,
+  createFaultInjector,
+  runWithRetry,
+  runChaosEngineeringDemo
 };
 
 // additional exports for coursework demo and new modules

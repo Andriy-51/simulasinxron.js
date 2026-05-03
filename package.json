@@ -16,10 +16,13 @@
     "auth-proxy-demo": "node src/proxy/authProxy.js",
     "logging-decorator-demo": "node src/decorators/loggingDecorator.js",
     "platform-demo": "node src/platform/simulationPlatform.js",
+    "queue-insights-demo": "node src/analysis/queueComparison.js",
+    "chaos-demo": "node src/chaos/faultInjection.js",
     "simulate-server": "node serverSimulator.js",
     "server-demo": "node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json",
     "queue-sim": "node serverSimulator.js",
-    "test": "node tests/smoke-asyncMap.js"
+    "test": "node tests/smoke-asyncMap.js",
+    "test:platform": "node tests/smoke_platform_features.js"
   },
   "dependencies": {
     "chalk": "^4.1.2"

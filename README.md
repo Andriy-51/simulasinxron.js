@@ -21,6 +21,8 @@
 - `system/monitor.js` - live dashboard для метрик платформи
 - `system/snapshot.js` - snapshot / restore стану черги та round-robin
 - `platform/simulationPlatform.js` - platform demo з моніторингом і resume
+- `analysis/queueComparison.js` - порівняння FIFO та priority queue з аналітичним звітом
+- `chaos/faultInjection.js` - chaos engineering demo з fault injection і retry
 - `simulation/requestGenerator.js` - генерація вхідного потоку запитів
 - `examples/courseworkMenu.js` - інтерактивне меню з усіма прикладами
 - `examples/helpdeskScenario.js` - практичний сценарій helpdesk
@@ -57,6 +59,24 @@
 - відновлює симуляцію з того самого місця;
 - записує фінальний звіт у файл.
 
+### Queue strategy comparison
+
+Файл [src/analysis/queueComparison.js](src/analysis/queueComparison.js) порівнює priority queue і FIFO на одному й тому самому workload:
+
+- рахує середній час очікування і обробки;
+- визначає втрати по SLA / deadline;
+- оцінює cache hit rate через memoize;
+- зберігає JSON report для посилання в пояснювальній записці.
+
+### Chaos engineering
+
+Файл [src/chaos/faultInjection.js](src/chaos/faultInjection.js) показує resilience-підхід:
+
+- inject-ить випадкові фейли або затримки в async-операції;
+- порівнює baseline проти режиму з retry;
+- показує, як retry підвищує частку успішних обробок;
+- формує окремий JSON report.
+
 ## UI/UX для демонстрації
 
 У консолі використовується стилізований текстовий інтерфейс:
@@ -76,6 +96,8 @@
 - різні типи задач: login, billing, payment, integration, report, shipping;
 - оцінка SLA для кожного звернення;
 - статистика по черзі, середньому часу очікування, обробці та порушеннях SLA.
+
+Додатково є аналітичний шар, який порівнює стратегії обробки, і окрема chaos-демонстрація, щоб показати, як система поводиться під навмисними збоями.
 
 Це виглядає набагато ближче до реальної серверної системи, ніж проста абстрактна симуляція.
 
@@ -117,16 +139,32 @@ npm run logging-decorator-demo
 npm run platform-demo
 ```
 
-### 6. Серверна симуляція запитів
+### 6. Queue insights demo
+
+```bash
+npm run queue-insights-demo
+```
+
+### 7. Chaos engineering demo
+
+```bash
+npm run chaos-demo
+```
+
+### 8. Серверна симуляція запитів
 
 ```bash
 node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json
 ```
 
-### 7. Тест
+### 9. Тест
 
 ```bash
 node tests/smoke-asyncMap.js
+```
+
+```bash
+npm run test:platform
 ```
 
 ## Що показує helpdesk case study
@@ -172,6 +210,8 @@ src/
 ├── queue/
 ├── reactive/
 ├── proxy/
+├── analysis/
+├── chaos/
 ├── platform/
 ├── server/
 ├── simulation/
@@ -187,5 +227,14 @@ src/
 - async/await
 - generators
 - EventEmitter
+
+## Академічний акцент
+
+Проект уже можна захищати не як набір лабораторних, а як приклад моделювання сервісної системи:
+
+- є окремий приклад предметної області, а не абстрактні числа;
+- є порівняння стратегій і вимірювані метрики;
+- є live monitoring, snapshot/resume і external config;
+- є chaos testing і retry-модель для розділу про стійкість.
 
 **Статус:** завершено, з практичним прикладом для захисту.

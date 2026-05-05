@@ -9,20 +9,28 @@
     "tests"
   ],
   "scripts": {
-    "start": "node src/examples/courseworkMenu.js",
-    "demo": "node src/examples/courseworkMenu.js",
-    "run-demo": "node src/examples/courseworkMenu.js",
+    "start": "node index.js",
+    "demo": "node index.js",
+    "run-demo": "node index.js",
     "case-study": "node src/examples/helpdeskScenario.js",
     "auth-proxy-demo": "node src/proxy/authProxy.js",
     "logging-decorator-demo": "node src/decorators/loggingDecorator.js",
     "platform-demo": "node src/platform/simulationPlatform.js",
     "queue-insights-demo": "node src/analysis/queueComparison.js",
     "chaos-demo": "node src/chaos/faultInjection.js",
+    "stress-test": "node src/stress/stressTestMode.js",
     "simulate-server": "node serverSimulator.js",
     "server-demo": "node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json",
     "queue-sim": "node serverSimulator.js",
     "test": "node tests/smoke-asyncMap.js",
-    "test:platform": "node tests/smoke_platform_features.js"
+    "test:platform": "node tests/smoke_platform_features.js",
+    "test:queue": "node tests/queue_priority_unit.js",
+    "demo:dashboard": "node src/examples/demoEnhancement1.js",
+    "demo:chaos": "node src/examples/demoEnhancement2.js",
+    "demo:helpdesk-advanced": "node src/examples/demoEnhancement3.js",
+    "demo:analytics": "node src/examples/demoEnhancement4.js",
+    "demo:full-integration": "node src/examples/fullIntegrationDemo.js",
+    "demo:all": "node src/examples/fullIntegrationDemo.js"
   },
   "dependencies": {
     "chalk": "^4.1.2"

@@ -4,7 +4,7 @@
 - базових навчальних модулів: кеш, черга, async-обробка, потоки, реактивна комунікація;
 - практичного кейсу, де ці модулі використовуються як модель реального helpdesk-процесу з SLA, пріоритетами і метриками.
 
-Окремо проект має polished console UI: рамки, таблиці, картки, кольорові секції і акуратне меню, щоб показ на захисті виглядав як готовий продукт, а не сирий скрипт.
+Окремо проект має polished console UI: рамки, таблиці, картки, кольорові секції і акуратне меню, щоб показ на захисті виглядав як готовий продукт, а не сирий скрипт. Кореневий [index.js](index.js) тепер є центральною точкою входу: з нього можна запускати сценарії, налаштовувати параметри і отримувати звіти в `outputs/`.
 
 ## Що тут є
 
@@ -23,6 +23,7 @@
 - `platform/simulationPlatform.js` - platform demo з моніторингом і resume
 - `analysis/queueComparison.js` - порівняння FIFO та priority queue з аналітичним звітом
 - `chaos/faultInjection.js` - chaos engineering demo з fault injection і retry
+- `stress/stressTestMode.js` - stress test mode з peak load, timeout tracking і fault injection
 - `simulation/requestGenerator.js` - генерація вхідного потоку запитів
 - `examples/courseworkMenu.js` - інтерактивне меню з усіма прикладами
 - `examples/helpdeskScenario.js` - практичний сценарій helpdesk
@@ -54,10 +55,11 @@
 Файл [src/platform/simulationPlatform.js](src/platform/simulationPlatform.js) об'єднує одразу кілька модулів у платформу:
 
 - завантажує runtime-параметри з [config.json](config.json) або змінних середовища;
+- читає секрети та overrides з `.env`;
 - збирає live-метрики в [system/monitor.js](src/system/monitor.js);
 - зберігає snapshot стану черги і round-robin у [system/snapshot.js](src/system/snapshot.js);
 - відновлює симуляцію з того самого місця;
-- записує фінальний звіт у файл.
+- записує фінальний звіт у `outputs/`.
 
 ### Queue strategy comparison
 
@@ -94,7 +96,7 @@
 - тікети підтримки від різних клієнтів;
 - пріоритети для термінових звернень;
 - різні типи задач: login, billing, payment, integration, report, shipping;
-- оцінка SLA для кожного звернення;
+- оцінка SLA для кожного звернеgit push -u origin mainння;
 - статистика по черзі, середньому часу очікування, обробці та порушеннях SLA.
 
 Додатково є аналітичний шар, який порівнює стратегії обробки, і окрема chaos-демонстрація, щоб показати, як система поводиться під навмисними збоями.
@@ -106,8 +108,16 @@
 ### 1. Інтерактивне меню курсової
 
 ```bash
-node src/examples/courseworkMenu.js
+npm start
 ```
+
+Або напряму:
+
+```bash
+node index.js
+```
+
+Це центральний CLI dashboard, де можна вибрати сценарій і задати параметри перед запуском.
 
 ### 2. Практичний helpdesk-кейс
 
@@ -151,13 +161,19 @@ npm run queue-insights-demo
 npm run chaos-demo
 ```
 
-### 8. Серверна симуляція запитів
+### 8. Stress test mode
+
+```bash
+npm run stress-test
+```
+
+### 9. Серверна симуляція запитів
 
 ```bash
 node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json
 ```
 
-### 9. Тест
+### 10. Тест
 
 ```bash
 node tests/smoke-asyncMap.js
@@ -165,6 +181,10 @@ node tests/smoke-asyncMap.js
 
 ```bash
 npm run test:platform
+```
+
+```bash
+npm run test:queue
 ```
 
 ## Що показує helpdesk case study
@@ -176,6 +196,8 @@ npm run test:platform
 - середній час обробки;
 - піковий розмір черги;
 - кількість порушень SLA.
+
+Після завершення більшості симуляцій артефакти пишуться в `outputs/`, щоб їх було легко збирати в одному місці для звіту або демо.
 
 ## CLI-опції для `serverSimulator.js`
 

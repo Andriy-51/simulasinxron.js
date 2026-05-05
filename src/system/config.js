@@ -3,8 +3,9 @@ const path = require("path");
 
 const DEFAULT_CONFIG = {
   runtime: {
-    reportPath: "reports",
-    snapshotPath: "snapshots",
+    outputPath: "outputs",
+    reportPath: "outputs",
+    snapshotPath: "outputs/snapshots",
     queueConcurrency: 3,
     queueRateLimit: 5,
     queueRateWindowMs: 1000,
@@ -31,6 +32,40 @@ const DEFAULT_CONFIG = {
   }
 };
 
+/**
+ * Load environment-style key/value pairs from a .env file.
+ * @param {string} envPath - Path to the .env file.
+ * @returns {Promise<object>} Parsed variables.
+ */
+async function loadDotEnv(envPath = path.resolve(process.cwd(), ".env")) {
+  try {
+    const content = await fs.readFile(envPath, "utf8");
+    const parsed = {};
+
+    for (const line of content.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) {
+        continue;
+      }
+
+      const separatorIndex = trimmed.indexOf("=");
+      if (separatorIndex === -1) {
+        continue;
+      }
+
+      const key = trimmed.slice(0, separatorIndex).trim();
+      const value = trimmed.slice(separatorIndex + 1).trim().replace(/^['"]|['"]$/g, "");
+      if (key) {
+        parsed[key] = value;
+      }
+    }
+
+    return parsed;
+  } catch {
+    return {};
+  }
+}
+
 function parseValue(value) {
   if (value === "true") return true;
   if (value === "false") return false;
@@ -39,34 +74,38 @@ function parseValue(value) {
   return value;
 }
 
-function applyEnvOverrides(target) {
-  const envMap = {
-    SIM_RUNTIME_QUEUE_CONCURRENCY: ["runtime", "queueConcurrency"],
-    SIM_RUNTIME_QUEUE_RATE_LIMIT: ["runtime", "queueRateLimit"],
-    SIM_RUNTIME_QUEUE_RATE_WINDOW_MS: ["runtime", "queueRateWindowMs"],
-    SIM_RUNTIME_MONITOR_REFRESH_MS: ["runtime", "monitorRefreshMs"],
-    SIM_AUTH_TYPE: ["authProxy", "type"],
-    SIM_AUTH_API_KEY: ["authProxy", "apiKey"],
-    SIM_AUTH_TOKEN: ["authProxy", "token"],
-    SIM_AUTH_ACCESS_TOKEN: ["authProxy", "accessToken"],
-    SIM_AUTH_REFRESH_TOKEN: ["authProxy", "refreshToken"],
-    SIM_LOG_LEVEL: ["logging", "level"],
-    SIM_LOG_DESTINATION: ["logging", "destination"],
-    SIM_DEMO_BATCH_SIZE: ["demo", "batchSize"],
-    SIM_DEMO_ROUND_ROBIN_CYCLES: ["demo", "roundRobinCycles"],
-    SIM_DEMO_CLIENTS: ["demo", "clients"],
-    SIM_DEMO_REQUESTS_PER_CLIENT: ["demo", "requestsPerClient"],
-    SIM_DEMO_VIP_RATE: ["demo", "vipRate"],
-    SIM_DEMO_TOTAL_REQUESTS: ["demo", "totalRequests"]
-  };
+function applyEnvOverrides(target, envSource = process.env) {
+  const envMap = [
+    [["SIM_RUNTIME_OUTPUT_PATH", "RUNTIME_OUTPUT_PATH"], ["runtime", "outputPath"]],
+    [["SIM_RUNTIME_REPORT_PATH", "RUNTIME_REPORT_PATH"], ["runtime", "reportPath"]],
+    [["SIM_RUNTIME_SNAPSHOT_PATH", "RUNTIME_SNAPSHOT_PATH"], ["runtime", "snapshotPath"]],
+    [["SIM_RUNTIME_QUEUE_CONCURRENCY", "RUNTIME_QUEUE_CONCURRENCY"], ["runtime", "queueConcurrency"]],
+    [["SIM_RUNTIME_QUEUE_RATE_LIMIT", "RUNTIME_QUEUE_RATE_LIMIT"], ["runtime", "queueRateLimit"]],
+    [["SIM_RUNTIME_QUEUE_RATE_WINDOW_MS", "RUNTIME_QUEUE_RATE_WINDOW_MS"], ["runtime", "queueRateWindowMs"]],
+    [["SIM_RUNTIME_MONITOR_REFRESH_MS", "RUNTIME_MONITOR_REFRESH_MS"], ["runtime", "monitorRefreshMs"]],
+    [["SIM_AUTH_TYPE", "AUTH_TYPE"], ["authProxy", "type"]],
+    [["SIM_AUTH_API_KEY", "AUTH_API_KEY"], ["authProxy", "apiKey"]],
+    [["SIM_AUTH_TOKEN", "AUTH_TOKEN"], ["authProxy", "token"]],
+    [["SIM_AUTH_ACCESS_TOKEN", "AUTH_ACCESS_TOKEN"], ["authProxy", "accessToken"]],
+    [["SIM_AUTH_REFRESH_TOKEN", "AUTH_REFRESH_TOKEN"], ["authProxy", "refreshToken"]],
+    [["SIM_LOG_LEVEL", "LOG_LEVEL"], ["logging", "level"]],
+    [["SIM_LOG_DESTINATION", "LOG_DESTINATION"], ["logging", "destination"]],
+    [["SIM_DEMO_BATCH_SIZE", "DEMO_BATCH_SIZE"], ["demo", "batchSize"]],
+    [["SIM_DEMO_ROUND_ROBIN_CYCLES", "DEMO_ROUND_ROBIN_CYCLES"], ["demo", "roundRobinCycles"]],
+    [["SIM_DEMO_CLIENTS", "DEMO_CLIENTS"], ["demo", "clients"]],
+    [["SIM_DEMO_REQUESTS_PER_CLIENT", "DEMO_REQUESTS_PER_CLIENT"], ["demo", "requestsPerClient"]],
+    [["SIM_DEMO_VIP_RATE", "DEMO_VIP_RATE"], ["demo", "vipRate"]],
+    [["SIM_DEMO_TOTAL_REQUESTS", "DEMO_TOTAL_REQUESTS"], ["demo", "totalRequests"]]
+  ];
 
-  for (const [envKey, pathParts] of Object.entries(envMap)) {
-    if (process.env[envKey] !== undefined) {
+  for (const [keys, pathParts] of envMap) {
+    const envKey = keys.find((key) => envSource[key] !== undefined);
+    if (envKey) {
       let cursor = target;
       for (let index = 0; index < pathParts.length - 1; index += 1) {
         cursor = cursor[pathParts[index]];
       }
-      cursor[pathParts[pathParts.length - 1]] = parseValue(process.env[envKey]);
+      cursor[pathParts[pathParts.length - 1]] = parseValue(envSource[envKey]);
     }
   }
 }
@@ -85,7 +124,13 @@ function deepMerge(base, patch) {
   return result;
 }
 
-async function loadConfig(configPath = path.resolve(process.cwd(), "config.json")) {
+/**
+ * Load config.json, then overlay .env and process environment values.
+ * @param {string} [configPath] - Path to config.json.
+ * @param {string} [envPath] - Path to .env.
+ * @returns {Promise<object>} Resolved configuration.
+ */
+async function loadConfig(configPath = path.resolve(process.cwd(), "config.json"), envPath = path.resolve(process.cwd(), ".env")) {
   let fileConfig = {};
 
   try {
@@ -96,11 +141,13 @@ async function loadConfig(configPath = path.resolve(process.cwd(), "config.json"
   }
 
   const config = deepMerge(DEFAULT_CONFIG, fileConfig);
-  applyEnvOverrides(config);
+  const dotenvConfig = await loadDotEnv(envPath);
+  applyEnvOverrides(config, { ...dotenvConfig, ...process.env });
   return config;
 }
 
 module.exports = {
   DEFAULT_CONFIG,
-  loadConfig
+  loadConfig,
+  loadDotEnv
 };

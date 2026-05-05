@@ -1,7 +1,8 @@
 {
   "runtime": {
-    "reportPath": "reports",
-    "snapshotPath": "snapshots",
+    "outputPath": "outputs",
+    "reportPath": "outputs",
+    "snapshotPath": "outputs/snapshots",
     "queueConcurrency": 3,
     "queueRateLimit": 5,
     "queueRateWindowMs": 1000,

@@ -114,7 +114,7 @@ async function compareQueueStrategies(options = {}) {
   return report;
 }
 
-async function runQueueComparisonDemo() {
+async function runQueueComparisonDemo(options = {}) {
   renderBanner("Queue strategy comparison", "priority queue vs FIFO under the same workload");
   renderSection("Why this matters", chalk.cyan);
   renderList([
@@ -123,8 +123,9 @@ async function runQueueComparisonDemo() {
     "Writes a JSON report so the results can be cited in a course report."
   ], chalk.whiteBright);
 
-  const reportPath = path.resolve(process.cwd(), "reports", `queue-comparison-${Date.now()}.json`);
-  const report = await compareQueueStrategies({ reportPath, workloadSize: 24 });
+  const reportDir = path.resolve(process.cwd(), options.outputDir || "outputs");
+  const reportPath = path.resolve(process.cwd(), options.reportPath || path.join(reportDir, `queue-comparison-${Date.now()}.json`));
+  const report = await compareQueueStrategies({ reportPath, workloadSize: options.workloadSize || 24 });
 
   renderCard(
     "Report location",

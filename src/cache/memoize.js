@@ -133,6 +133,13 @@ function memoize(fn, options = {}) {
 
   const cache = new Map();
   const policy = normalizePolicy(evictionPolicy);
+  const stats = {
+    hits: 0,
+    misses: 0,
+    sets: 0,
+    evictions: 0,
+    expiredEvictions: 0
+  };
 
   const memoized = function memoizedFunction(...args) {
     const key = String(keyResolver(args));
@@ -142,7 +149,10 @@ function memoize(fn, options = {}) {
     if (cachedEntry) {
       if (cachedEntry.expiresAt !== Infinity && cachedEntry.expiresAt <= now) {
         cache.delete(key);
+        stats.evictions += 1;
+        stats.expiredEvictions += 1;
       } else {
+        stats.hits += 1;
         cachedEntry.accessCount += 1;
         cachedEntry.lastAccessed = now;
 
@@ -155,11 +165,13 @@ function memoize(fn, options = {}) {
       }
     }
 
+    stats.misses += 1;
     deleteKeys(cache, getExpiredKeys(cache, now));
 
     const value = fn.apply(this, args);
     const expiresAt = ttlMs === Infinity ? Infinity : now + ttlMs;
 
+    stats.sets += 1;
     cache.set(key, {
       value,
       expiresAt,
@@ -177,13 +189,20 @@ function memoize(fn, options = {}) {
 
     if (keysToEvict.length > 0) {
       deleteKeys(cache, keysToEvict);
+      stats.evictions += keysToEvict.length;
     }
 
     return value;
   };
 
   memoized.cache = cache;
+  memoized.stats = stats;
   memoized.clear = () => cache.clear();
+  memoized.getStats = () => ({
+    ...stats,
+    size: cache.size,
+    hitRate: stats.hits + stats.misses === 0 ? 0 : stats.hits / (stats.hits + stats.misses)
+  });
 
   return memoized;
 }

@@ -129,6 +129,61 @@ function renderTable(headers, rows) {
   }
 }
 
+function renderDashboardSnapshot(snapshot = {}) {
+  const queue = snapshot.queue || {};
+  const cache = snapshot.cache || {};
+  const iterators = snapshot.iterators || {};
+  const health = snapshot.health || {};
+
+  renderBanner(snapshot.label || "Live dashboard", snapshot.subtitle || "real-time simulation metrics");
+
+  renderCard(
+    "Queue",
+    [
+      ["Size", String(queue.size ?? 0)],
+      ["Peak", String(queue.maxSize ?? queue.peakSize ?? 0)],
+      ["Processed", String(queue.processed ?? 0)],
+      ["Pending", String(queue.pending ?? 0)],
+      ["Throughput", `${Number(queue.throughput ?? 0).toFixed(2)} req/s`]
+    ],
+    chalk.blue
+  );
+
+  renderCard(
+    "Cache",
+    [
+      ["Hit rate", `${Number(cache.hitRate ?? 0).toFixed(1)}%`],
+      ["Hits", String(cache.hits ?? 0)],
+      ["Misses", String(cache.misses ?? 0)],
+      ["Evictions", String(cache.evictions ?? 0)],
+      ["Size", String(cache.size ?? 0)]
+    ],
+    chalk.green
+  );
+
+  renderCard(
+    "Iterators",
+    [
+      ["Active", String(iterators.active ?? 0)],
+      ["Max concurrent", String(iterators.maxConcurrent ?? iterators.max ?? 0)],
+      ["Completed", String(iterators.completed ?? 0)],
+      ["Timeouts", String(iterators.timeouts ?? 0)]
+    ],
+    chalk.magenta
+  );
+
+  renderCard(
+    "Health",
+    [
+      ["Score", `${Number(health.score ?? 100).toFixed(1)}%`],
+      ["Errors", String(health.errors ?? 0)],
+      ["Warnings", String(health.warnings ?? 0)],
+      ["Updated", snapshot.timestamp ? new Date(snapshot.timestamp).toLocaleTimeString("uk-UA") : "now"]
+    ],
+    chalk.cyan
+  );
+}
+
 module.exports = {
   chalk,
   colorForPriority,
@@ -137,5 +192,6 @@ module.exports = {
   renderKeyValueRows,
   renderList,
   renderCard,
-  renderTable
+  renderTable,
+  renderDashboardSnapshot
 };

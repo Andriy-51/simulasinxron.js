@@ -93,6 +93,35 @@ function createAuthStrategy(options = {}) {
   return new ApiKeyStrategy(options.apiKey || "demo-api-key");
 }
 
+const ACCESS_LEVELS = {
+  public: 0,
+  guest: 0,
+  standard: 1,
+  user: 1,
+  premium: 2,
+  support: 2,
+  protected: 3,
+  admin: 4
+};
+
+function normalizeAccessLevel(level) {
+  if (typeof level === "number" && Number.isFinite(level)) {
+    return level;
+  }
+
+  const normalized = String(level || "public").toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(ACCESS_LEVELS, normalized)) {
+    return ACCESS_LEVELS[normalized];
+  }
+
+  const parsed = Number.parseInt(normalized, 10);
+  return Number.isFinite(parsed) ? parsed : ACCESS_LEVELS.public;
+}
+
+function normalizeStringList(values = []) {
+  return new Set(values.filter(Boolean).map((value) => String(value)));
+}
+
 function createFakeApiService(name = "orders-api") {
   return {
     name,
@@ -117,6 +146,11 @@ function createAuthProxy(service, options = {}) {
   }
 
   let strategy = createAuthStrategy(options.strategy || options);
+  const policy = {
+    accessLevel: normalizeAccessLevel(options.accessLevel ?? options.clearance ?? "public"),
+    allowedActions: options.allowedActions ? normalizeStringList(options.allowedActions) : null,
+    blockedResources: options.blockedResources ? normalizeStringList(options.blockedResources) : new Set()
+  };
   const limit = Math.max(1, Number(options.rateLimit || 5));
   const windowMs = Math.max(100, Number(options.rateWindowMs || 1_000));
   let requestTimestamps = [];
@@ -148,9 +182,38 @@ function createAuthProxy(service, options = {}) {
     requestTimestamps.push(now());
   };
 
+  const denyRequest = (request, reason) => {
+    record("access-denied", {
+      path: request.path,
+      action: request.action || null,
+      resource: request.resource || request.path || null,
+      reason,
+      accessLevel: policy.accessLevel
+    });
+    throw new Error(`access denied: ${reason}`);
+  };
+
+  const assertAccess = (request) => {
+    const requiredAccessLevel = normalizeAccessLevel(request.requiredAccessLevel ?? request.accessLevel ?? request.clearance ?? "public");
+
+    if (requiredAccessLevel > policy.accessLevel) {
+      denyRequest(request, `required access level ${requiredAccessLevel} exceeds ${policy.accessLevel}`);
+    }
+
+    if (request.action && policy.allowedActions && !policy.allowedActions.has(String(request.action))) {
+      denyRequest(request, `action ${request.action} is not allowed`);
+    }
+
+    const resourceName = request.resource || request.path || null;
+    if (resourceName && policy.blockedResources.has(String(resourceName))) {
+      denyRequest(request, `resource ${resourceName} is blocked`);
+    }
+  };
+
   const proxy = {
     name: `${service.name || "api"}-proxy`,
     async request(request) {
+      assertAccess(request);
       await checkRateLimit();
 
       if (typeof strategy.isExpired === "function" && strategy.isExpired()) {
@@ -182,11 +245,37 @@ function createAuthProxy(service, options = {}) {
       strategy = createAuthStrategy(nextStrategyOptions);
       record("strategy-switched", { strategy: strategy.name });
     },
+    setAccessLevel(nextAccessLevel) {
+      policy.accessLevel = normalizeAccessLevel(nextAccessLevel);
+      record("access-level-updated", { accessLevel: policy.accessLevel });
+    },
+    setPolicy(nextPolicy = {}) {
+      if (Object.prototype.hasOwnProperty.call(nextPolicy, "accessLevel")) {
+        policy.accessLevel = normalizeAccessLevel(nextPolicy.accessLevel);
+      }
+
+      if (Object.prototype.hasOwnProperty.call(nextPolicy, "allowedActions")) {
+        policy.allowedActions = nextPolicy.allowedActions ? normalizeStringList(nextPolicy.allowedActions) : null;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(nextPolicy, "blockedResources")) {
+        policy.blockedResources = nextPolicy.blockedResources ? normalizeStringList(nextPolicy.blockedResources) : new Set();
+      }
+
+      record("policy-updated", {
+        accessLevel: policy.accessLevel,
+        allowedActions: policy.allowedActions ? Array.from(policy.allowedActions) : [],
+        blockedResources: Array.from(policy.blockedResources)
+      });
+    },
     getEvents() {
       return [...events];
     },
     getStrategyName() {
       return strategy.name;
+    },
+    getAccessLevel() {
+      return policy.accessLevel;
     }
   };
 

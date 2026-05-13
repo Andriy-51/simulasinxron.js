@@ -215,6 +215,7 @@ async function runPlatformDemo(options = {}) {
       generatedAt: new Date().toISOString(),
       snapshotPath,
       queue: queueSummary,
+      queueRawMetrics: queue.metrics,
       dashboard: dashboardSummary,
       performance: {
         memoization: {

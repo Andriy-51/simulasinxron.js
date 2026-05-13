@@ -195,9 +195,52 @@ class ReportGenerator {
           csv += `"${section.title}","${key}","${value}"\n`;
         }
       }
+
+      if (section.type === "heatmap") {
+        // export detailed latency rows: Bucket,Count,AvgMs
+        csv += `"${section.title}","bucket","count","avgMs"\n`;
+        for (const row of section.data.buckets) {
+          csv += `"${section.title}","${row.bucket}","${row.count}","${row.avgMs}"\n`;
+        }
+      }
     }
 
     return csv;
+  }
+
+  /**
+   * Add a latency heatmap section from raw per-request metrics.
+   * @param {string} title
+   * @param {Array<{waitingTimeMs:number,processingTimeMs:number,priority:number}>} samples
+   * @param {object} options
+   */
+  addLatencyHeatmap(title, samples = [], options = {}) {
+    // Build buckets by processingTimeMs
+    const max = samples.reduce((m, s) => Math.max(m, s.processingTimeMs || 0), 0);
+    const min = samples.reduce((m, s) => Math.min(m, s.processingTimeMs || Infinity), Infinity);
+    const buckets = [];
+    const bucketCount = options.bucketCount || 10;
+    const range = Math.max(1, max - (min === Infinity ? 0 : min));
+    const step = Math.ceil(range / bucketCount) || 1;
+
+    for (let i = 0; i < bucketCount; i++) {
+      const low = (min === Infinity ? 0 : min) + i * step;
+      const high = low + step - 1;
+      buckets.push({ bucket: `${low}-${high}`, low, high, count: 0, totalMs: 0 });
+    }
+
+    for (const s of samples) {
+      const v = s.processingTimeMs || 0;
+      const idx = Math.min(bucketCount - 1, Math.floor((v - (min === Infinity ? 0 : min)) / step));
+      const b = buckets[Math.max(0, idx)];
+      b.count += 1;
+      b.totalMs += v;
+    }
+
+    const out = buckets.map((b) => ({ bucket: b.bucket, count: b.count, avgMs: b.count ? (b.totalMs / b.count).toFixed(2) : 0 }));
+
+    this.sections.push({ type: "heatmap", title, data: { buckets: out, samplesCount: samples.length } });
+    return this;
   }
 
   render() {
@@ -337,3 +380,60 @@ module.exports = {
   CacheEfficiencyAnalyzer,
   ThroughputAnalyzer
 };
+
+/**
+ * Run two platform simulations with different options and produce a comparative report.
+ * @param {object} optionsA - Options to pass to runPlatformDemo for run A (e.g., { demo: { totalRequests }, runtime: { queueConcurrency }, queueStrategy: 'priority' })
+ * @param {object} optionsB - Options for run B
+ * @param {object} runOptions - Additional options for report generation (outputDir, reportIdPrefix)
+ */
+async function compareRuns(optionsA = {}, optionsB = {}, runOptions = {}) {
+  const { runPlatformDemo } = require("../platform/simulationPlatform");
+  const rg = new ReportGenerator({ outputDir: runOptions.outputDir });
+
+  // Map incoming simple queue strategy option to the place runPlatformDemo accepts it via options
+  const mapOptions = (opts, strategy) => {
+    const mapped = { ...(opts || {}) };
+    mapped.demo = { ...(mapped.demo || {}) };
+    // allow passing through a queue strategy to the runtime for runPlatformDemo to pick up
+    mapped.runtime = { ...(mapped.runtime || {}), queueStrategy: strategy };
+    return mapped;
+  };
+
+  // Run A
+  const aOpts = mapOptions(optionsA, optionsA.queueStrategy || "priority");
+  const reportA = await runPlatformDemo(aOpts);
+
+  // Run B
+  const bOpts = mapOptions(optionsB, optionsB.queueStrategy || "fifo");
+  const reportB = await runPlatformDemo(bOpts);
+
+  // Pick a compact metrics summary for comparison
+  const summarize = (report) => {
+    return {
+      processed: report.queue?.processed ?? report.queue?.summary?.processed ?? (report.queue ? report.queue.processed : 0),
+      avgWaitingMs: report.queue?.avgWaitingMs ?? report.queue?.summary?.avgWaitingMs ?? 0,
+      avgProcessingMs: report.queue?.avgProcessingMs ?? report.queue?.summary?.avgProcessingMs ?? 0,
+      peakQueue: report.queue?.peakQueueSize ?? report.queue?.summary?.peakQueueSize ?? 0,
+      memoSpeedupPercent: report.performance?.memoization?.improvementPercent ?? (report.performance?.memoization?.improvementPercent ?? 0),
+      iteratorTimeout: report.performance?.iteratorThroughput?.timeoutReached ?? report.iteratorTimeout ?? false,
+      cacheHitRate: (report.dashboard?.cache?.hitRate ?? report.performance?.memoization?.hitRate ?? 0)
+    };
+  };
+
+  const sumA = summarize(reportA);
+  const sumB = summarize(reportB);
+
+  rg.addComparison("Queue Strategy Comparison", optionsA.label || "A", sumA, optionsB.label || "B", sumB);
+
+  rg.addAnalysis("Run A details", "Configuration for run A", [JSON.stringify(aOpts)]);
+  rg.addAnalysis("Run B details", "Configuration for run B", [JSON.stringify(bOpts)]);
+
+  const paths = await rg.save();
+  return {
+    reportPaths: paths,
+    summary: { A: sumA, B: sumB }
+  };
+}
+
+module.exports.compareRuns = compareRuns;

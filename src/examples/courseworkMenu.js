@@ -12,6 +12,7 @@ const {
     createObservable,
 } = require("../");
 const { runServerSimulation } = require("../../serverSimulator");
+const { runHelpdeskCaseStudy } = require("./helpdeskScenario");
 
 const { createInterface } = require("node:readline/promises");
 const { stdin, stdout } = require("node:process");
@@ -298,6 +299,7 @@ async function runInteractiveMenu() {
             console.log("8. Run full showcase");
             console.log("9. Run custom showcase");
             console.log("10. Run clients-server simulation");
+            console.log("11. Run helpdesk case study");
             console.log("0. Exit");
 
             const choice = (await rl.question("Choose an option: ")).trim();
@@ -336,6 +338,8 @@ async function runInteractiveMenu() {
                 await runLoggingSection(monitor);
             } else if (choice === "10") {
                 await runServerSimulation({ clients: 4, requestsPerClient: 5, concurrency: 3 });
+            } else if (choice === "11") {
+                await runHelpdeskCaseStudy();
             } else {
                 console.log("Unknown option, try again.");
                 continue;

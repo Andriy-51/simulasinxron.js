@@ -5,6 +5,8 @@ const { BiDirectionalPriorityQueue } = require("./queue/biDirectionalPriorityQue
 const { AbortError, asyncMapCallback, asyncMap, createAsyncMapDemoCases } = require("./async/asyncArrayVariants");
 const { chunkAsyncIterable, processLargeData, createEventBasedStream, consumeEventBasedStream } = require("./streams/largeDataProcessing");
 const { ReactiveEmitter, createReactiveChannel, createObservable } = require("./reactive/reactiveCommunication");
+const { ApiKeyStrategy, JwtStrategy, OAuthStrategy, createAuthStrategy, createFakeApiService, createAuthProxy, runAuthProxyDemo } = require("./proxy/authProxy");
+const { createLogSink, createLoggingDecorator, runLoggingDecoratorDemo } = require("./decorators/loggingDecorator");
 
 module.exports = {
   roundRobinGenerator,
@@ -21,7 +23,17 @@ module.exports = {
   consumeEventBasedStream,
   ReactiveEmitter,
   createReactiveChannel,
-  createObservable
+  createObservable,
+  ApiKeyStrategy,
+  JwtStrategy,
+  OAuthStrategy,
+  createAuthStrategy,
+  createFakeApiService,
+  createAuthProxy,
+  runAuthProxyDemo,
+  createLogSink,
+  createLoggingDecorator,
+  runLoggingDecoratorDemo
 };
 
 // additional exports for coursework demo and new modules

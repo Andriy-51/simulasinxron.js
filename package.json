@@ -13,6 +13,8 @@
     "demo": "node src/examples/courseworkMenu.js",
     "run-demo": "node src/examples/courseworkMenu.js",
     "case-study": "node src/examples/helpdeskScenario.js",
+    "auth-proxy-demo": "node src/proxy/authProxy.js",
+    "logging-decorator-demo": "node src/decorators/loggingDecorator.js",
     "simulate-server": "node serverSimulator.js",
     "server-demo": "node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json",
     "queue-sim": "node serverSimulator.js",

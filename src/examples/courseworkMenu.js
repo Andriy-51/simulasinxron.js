@@ -10,6 +10,8 @@ const {
     consumeEventBasedStream,
     createReactiveChannel,
     createObservable,
+    runAuthProxyDemo,
+    runLoggingDecoratorDemo,
 } = require("../");
 const { runServerSimulation } = require("../../serverSimulator");
 const { runHelpdeskCaseStudy } = require("./helpdeskScenario");
@@ -32,6 +34,20 @@ function sleep(ms) {
 function section(number, title) {
     const label = `${number}. ${title}`;
     renderBanner("Simulasinxron coursework", label);
+}
+
+async function runAuthProxySection(monitor) {
+    section(12, "Authentication proxy");
+    const startedAt = Date.now();
+    await runAuthProxyDemo();
+    monitor.record("Auth proxy", startedAt);
+}
+
+async function runLoggingDecoratorSection(monitor) {
+    section(13, "Logging decorator");
+    const startedAt = Date.now();
+    await runLoggingDecoratorDemo();
+    monitor.record("Logging decorator", startedAt);
 }
 
 function createMonitor() {
@@ -290,6 +306,8 @@ async function runInteractiveMenu() {
                     ["9", "Custom showcase"],
                     ["10", "Clients-server simulation"],
                     ["11", "Helpdesk case study"],
+                    ["12", "Auth proxy for API service"],
+                    ["13", "Logging decorator"],
                     ["0", "Exit"]
                 ],
                 chalk.cyan
@@ -297,6 +315,8 @@ async function runInteractiveMenu() {
 
             renderList([
                 "Press 11 to show the realistic helpdesk scenario with SLA metrics.",
+                "Use 12 for an API proxy that injects credentials and renews tokens.",
+                "Use 13 for the logging decorator with levels and timing.",
                 "Use 10 to show server throughput and priority handling.",
                 "Use 8 for the full polished demo."
             ], chalk.whiteBright);
@@ -339,6 +359,10 @@ async function runInteractiveMenu() {
                 await runServerSimulation({ clients: 4, requestsPerClient: 5, concurrency: 3 });
             } else if (choice === "11") {
                 await runHelpdeskCaseStudy();
+            } else if (choice === "12") {
+                await runAuthProxySection(monitor);
+            } else if (choice === "13") {
+                await runLoggingDecoratorSection(monitor);
             } else {
                 console.log("Unknown option, try again.");
                 continue;

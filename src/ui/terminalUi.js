@@ -65,17 +65,49 @@ function renderList(items, itemStyle = chalk.whiteBright) {
 }
 
 function renderCard(title, rows = [], tone = chalk.cyan) {
+  const maxContentWidth = 72;
   const textRows = rows.map(([key, value]) => `${key}: ${value}`);
-  const width = Math.max(title.length, ...textRows.map((line) => line.length)) + 6;
+  const width = Math.min(Math.max(title.length, ...textRows.map((line) => line.length)) + 6, maxContentWidth);
   const top = `╭${"─".repeat(width)}╮`;
   const bottom = `╰${"─".repeat(width)}╯`;
   console.log(tone(top));
-  console.log(tone(`│  ${title.padEnd(width - 2)}│`));
+  console.log(tone(`│  ${title.slice(0, width - 2).padEnd(width - 2)}│`));
   console.log(tone(`├${"─".repeat(width)}┤`));
 
+  const wrapText = (text, limit) => {
+    const words = String(text).split(/\s+/).filter(Boolean);
+    const lines = [];
+    let current = "";
+
+    for (const word of words) {
+      if (!current) {
+        current = word;
+        continue;
+      }
+
+      if ((current + " " + word).length <= limit) {
+        current += ` ${word}`;
+      } else {
+        lines.push(current);
+        current = word;
+      }
+    }
+
+    if (current) {
+      lines.push(current);
+    }
+
+    return lines.length > 0 ? lines : [""];
+  };
+
   for (const [key, value] of rows) {
-    const line = `${key}: ${value}`;
-    console.log(tone(`│  ${line.padEnd(width - 2)}│`));
+    const label = `${key}: `;
+    const wrapped = wrapText(value, Math.max(8, width - 4 - label.length));
+
+    console.log(tone(`│  ${label}${wrapped[0].padEnd(width - 4 - label.length)}│`));
+    for (let index = 1; index < wrapped.length; index += 1) {
+      console.log(tone(`│  ${" ".repeat(label.length)}${wrapped[index].padEnd(width - 4 - label.length)}│`));
+    }
   }
 
   console.log(tone(bottom));

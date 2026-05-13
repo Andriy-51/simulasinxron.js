@@ -15,9 +15,33 @@
 - `reactive/reactiveCommunication.js` - подієва комунікація та Observable-патерн
 - `server/server.js` - симуляція серверної обробки запитів
 - `server/queue.js` - менеджер пріоритетної черги і метрик
+- `proxy/authProxy.js` - auth proxy для API з політиками доступу
+- `decorators/loggingDecorator.js` - logging decorator з рівнями логування
 - `simulation/requestGenerator.js` - генерація вхідного потоку запитів
 - `examples/courseworkMenu.js` - інтерактивне меню з усіма прикладами
 - `examples/helpdeskScenario.js` - практичний сценарій helpdesk
+
+## Додаткові практичні модулі
+
+### Auth proxy для API
+
+Файл [src/proxy/authProxy.js](src/proxy/authProxy.js) показує, як проміжний шар може:
+
+- інжектити credentials у запити;
+- працювати з API key, JWT і OAuth;
+- оновлювати токен, якщо він протермінувався;
+- обмежувати частоту запитів;
+- логувати події проксі в реальному часі.
+
+### Logging decorator
+
+Файл [src/decorators/loggingDecorator.js](src/decorators/loggingDecorator.js) показує, як:
+
+- обгорнути sync або async функцію;
+- задати рівень логування INFO / DEBUG / ERROR;
+- друкувати аргументи, результат і тривалість виконання;
+- писати логи в console, file або memory sink;
+- вмикати режим only-errors.
 
 ## UI/UX для демонстрації
 
@@ -61,13 +85,25 @@ node src/examples/helpdeskScenario.js
 npm run case-study
 ```
 
-### 3. Серверна симуляція запитів
+### 3. Auth proxy demo
+
+```bash
+npm run auth-proxy-demo
+```
+
+### 4. Logging decorator demo
+
+```bash
+npm run logging-decorator-demo
+```
+
+### 5. Серверна симуляція запитів
 
 ```bash
 node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json
 ```
 
-### 4. Тест
+### 6. Тест
 
 ```bash
 node tests/smoke-asyncMap.js
@@ -100,7 +136,7 @@ node tests/smoke-asyncMap.js
 
 Якщо треба коротко пояснити суть роботи викладачу, можна сказати так:
 
-> У курсoвій зібрано набір асинхронних механізмів JavaScript і показано їх на двох рівнях: як окремі навчальні модулі та як практичну helpdesk-систему з чергою, пріоритетами, SLA і метриками. Тобто це не тільки демонстрація синтаксису, а модель реального сервісного процесу.
+> У курсoвій зібрано набір асинхронних механізмів JavaScript і показано їх на кількох рівнях: як окремі навчальні модулі, як практичну helpdesk-систему з чергою, пріоритетами, SLA і метриками, а також як реалістичні інтеграційні приклади з auth proxy і logging decorator. Тобто це не тільки демонстрація синтаксису, а модель сервісного процесу та інфраструктурних шарів.
 
 ## Структура проекту
 
@@ -112,8 +148,10 @@ src/
 ├── examples/
 ├── generators/
 ├── logs/
+├── decorators/
 ├── queue/
 ├── reactive/
+├── proxy/
 ├── server/
 ├── simulation/
 ├── streams/

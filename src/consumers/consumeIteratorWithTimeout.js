@@ -26,7 +26,7 @@ function consumeIteratorWithTimeout(iterator, timeoutSeconds, processingCallback
 
     const pauseStart = Date.now();
     while (Date.now() - pauseStart < pauseMs) {
-      // Busy wait to preserve the original Task 1 synchronous behavior.
+      // Busy wait to preserve the original synchronous demo behavior.
     }
   }
 

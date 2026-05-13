@@ -1,7 +1,7 @@
 const { createReactiveChannel } = require("../reactive/reactiveCommunication");
 const { QueueManager } = require("../server/queue");
-const { logLine } = require("../logs/logger");
 const { sleep, now } = require("../utils/delay");
+const { chalk, colorForPriority, renderBanner, renderCard, renderSection, renderTable, renderKeyValueRows, renderList } = require("../ui/terminalUi");
 
 const CASE_TICKETS = [
   { id: "HD-1001", client: "Nova Market", category: "billing", priority: 1, estimatedSlaMs: 900 },
@@ -39,23 +39,37 @@ async function processTicket(ticket) {
 }
 
 function printHeader() {
-  console.log("\n=====================================");
-  console.log("=== Helpdesk case study scenario ===");
-  console.log("=====================================");
-  console.log("Realistic case: support queue for an e-commerce platform during peak hours");
+  renderBanner("Helpdesk case study", "E-commerce support queue during peak hours");
 }
 
 function printTickets() {
-  console.log("Incoming tickets:");
-  for (const ticket of CASE_TICKETS) {
-    const tag = ticket.priority > 0 ? "URGENT" : "STD";
-    console.log(`- ${ticket.id} | ${ticket.client} | ${ticket.category} | ${tag} | SLA ${ticket.estimatedSlaMs} ms`);
-  }
+  renderSection("Incoming tickets", chalk.cyan);
+  renderTable(
+    ["Ticket", "Client", "Type", "Priority", "SLA"],
+    CASE_TICKETS.map((ticket) => [
+      ticket.id,
+      ticket.client,
+      ticket.category,
+      ticket.priority > 0 ? "URGENT" : "STD",
+      `${ticket.estimatedSlaMs} ms`
+    ])
+  );
 }
 
 async function runHelpdeskCaseStudy() {
   printHeader();
   printTickets();
+
+  renderCard(
+    "Case details",
+    [
+      ["Domain", "Support operations"],
+      ["Queue type", "Priority + FIFO fallback"],
+      ["Workers", "3 concurrent handlers"],
+      ["Goal", "Handle urgent tickets first and stay within SLA"]
+    ],
+    chalk.blue
+  );
 
   const channel = createReactiveChannel();
   const manager = new QueueManager({
@@ -90,21 +104,21 @@ async function runHelpdeskCaseStudy() {
     return ticket ? totalSpent > ticket.estimatedSlaMs : false;
   });
 
-  console.log("\n=== Helpdesk metrics ===");
-  console.log(`Processed tickets   : ${metrics.processed}`);
-  console.log(`Urgent tickets      : ${metrics.vipProcessed}`);
-  console.log(`Average wait        : ${metrics.avgWaitingMs.toFixed(2)} ms`);
-  console.log(`Average processing  : ${metrics.avgProcessingMs.toFixed(2)} ms`);
-  console.log(`Peak queue size     : ${metrics.peakQueueSize}`);
-  console.log(`SLA breaches        : ${breaches.length}`);
+  renderSection("Helpdesk metrics", chalk.green);
+  renderKeyValueRows([
+    ["Processed tickets", String(metrics.processed), chalk.whiteBright],
+    ["Urgent tickets", String(metrics.vipProcessed), chalk.whiteBright],
+    ["Average wait", `${metrics.avgWaitingMs.toFixed(2)} ms`, chalk.whiteBright],
+    ["Average processing", `${metrics.avgProcessingMs.toFixed(2)} ms`, chalk.whiteBright],
+    ["Peak queue size", String(metrics.peakQueueSize), chalk.whiteBright],
+    ["SLA breaches", String(breaches.length), breaches.length === 0 ? chalk.greenBright : chalk.redBright]
+  ]);
 
   if (breaches.length > 0) {
-    console.log("Breached tickets:");
-    for (const ticket of breaches) {
-      console.log(`- ${ticket.sequence}`);
-    }
+    renderSection("Breached tickets", chalk.red);
+    renderList(breaches.map((ticket) => `${ticket.sequence}`), chalk.redBright);
   } else {
-    console.log("All tickets were handled within the SLA window.");
+    console.log(chalk.greenBright("All tickets were handled within the SLA window."));
   }
 }
 

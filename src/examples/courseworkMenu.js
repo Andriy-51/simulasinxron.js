@@ -13,24 +13,17 @@ const {
 } = require("../");
 const { runServerSimulation } = require("../../serverSimulator");
 const { runHelpdeskCaseStudy } = require("./helpdeskScenario");
+const {
+    chalk,
+    renderBanner,
+    renderSection,
+    renderKeyValueRows,
+    renderList,
+    renderCard
+} = require("../ui/terminalUi");
 
 const { createInterface } = require("node:readline/promises");
 const { stdin, stdout } = require("node:process");
-
-let chalk;
-try {
-    chalk = require("chalk");
-} catch {
-    const createPassthrough = () => {
-        const passthrough = (...values) => values.map((value) => String(value)).join(" ");
-        return new Proxy(passthrough, {
-            get: () => createPassthrough(),
-            apply: (_, __, args) => args.map((value) => String(value)).join(" ")
-        });
-    };
-
-    chalk = createPassthrough();
-}
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -38,10 +31,7 @@ function sleep(ms) {
 
 function section(number, title) {
     const label = `${number}. ${title}`;
-    console.log();
-    console.log(chalk.bold.blue("=".repeat(label.length + 8)));
-    console.log(chalk.bold.blue(`=== ${label} ===`));
-    console.log(chalk.bold.blue("=".repeat(label.length + 8)));
+    renderBanner("Simulasinxron coursework", label);
 }
 
 function createMonitor() {
@@ -51,10 +41,8 @@ function createMonitor() {
             this.steps.push({ name, durationMs: Date.now() - startedAt });
         },
         print() {
-            console.log("\nПідсумок моніторингу:");
-            for (const step of this.steps) {
-                console.log(chalk.dim(`- ${step.name}: ${step.durationMs} ms`));
-            }
+            renderSection("Підсумок моніторингу", chalk.magenta);
+            renderKeyValueRows(this.steps.map((step) => [step.name, `${step.durationMs} ms`, chalk.whiteBright]));
         }
     };
 }
@@ -287,20 +275,31 @@ async function runInteractiveMenu() {
 
     try {
         while (true) {
-            console.log();
-            console.log(chalk.bold.blue("=== Simulasinxron coursework menu ==="));
-            console.log("1. Run generators section");
-            console.log("2. Run priority queue section");
-            console.log("3. Run async processing section");
-            console.log("4. Run caching section");
-            console.log("5. Run large data section");
-            console.log("6. Run reactive communication section");
-            console.log("7. Run logging section");
-            console.log("8. Run full showcase");
-            console.log("9. Run custom showcase");
-            console.log("10. Run clients-server simulation");
-            console.log("11. Run helpdesk case study");
-            console.log("0. Exit");
+            renderBanner("Simulasinxron coursework", "Interactive showcase menu");
+            renderCard(
+                "What you can show",
+                [
+                    ["1", "Generators and iterators"],
+                    ["2", "Priority queue"],
+                    ["3", "Async processing"],
+                    ["4", "Caching"],
+                    ["5", "Large data"],
+                    ["6", "Reactive communication"],
+                    ["7", "Logging"],
+                    ["8", "Full showcase"],
+                    ["9", "Custom showcase"],
+                    ["10", "Clients-server simulation"],
+                    ["11", "Helpdesk case study"],
+                    ["0", "Exit"]
+                ],
+                chalk.cyan
+            );
+
+            renderList([
+                "Press 11 to show the realistic helpdesk scenario with SLA metrics.",
+                "Use 10 to show server throughput and priority handling.",
+                "Use 8 for the full polished demo."
+            ], chalk.whiteBright);
 
             const choice = (await rl.question("Choose an option: ")).trim();
             const monitor = createMonitor();

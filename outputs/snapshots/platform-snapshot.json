@@ -1,0 +1,129 @@
+{
+  "cursor": {
+    "items": [
+      {
+        "id": "WL-01",
+        "title": "cache warmup",
+        "priority": 1,
+        "baseMs": 120,
+        "domain": "api"
+      },
+      {
+        "id": "WL-02",
+        "title": "batch import",
+        "priority": 0,
+        "baseMs": 210,
+        "domain": "jobs"
+      },
+      {
+        "id": "WL-03",
+        "title": "priority sync",
+        "priority": 1,
+        "baseMs": 180,
+        "domain": "realtime"
+      },
+      {
+        "id": "WL-04",
+        "title": "report rebuild",
+        "priority": 0,
+        "baseMs": 260,
+        "domain": "analytics"
+      },
+      {
+        "id": "WL-05",
+        "title": "token refresh",
+        "priority": 1,
+        "baseMs": 140,
+        "domain": "auth"
+      },
+      {
+        "id": "WL-06",
+        "title": "cleanup pass",
+        "priority": 0,
+        "baseMs": 190,
+        "domain": "maintenance"
+      }
+    ],
+    "index": 4
+  },
+  "queue": {
+    "concurrency": 3,
+    "totalRequests": 20,
+    "strategy": "priority",
+    "active": 3,
+    "completed": 7,
+    "peakQueueSize": 1,
+    "queueOrderCounter": 10,
+    "queue": [],
+    "metrics": [
+      {
+        "requestId": 1,
+        "sequence": 1,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 2,
+        "sequence": 2,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 3,
+        "sequence": 3,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 5,
+        "sequence": 5,
+        "waitingTimeMs": 15,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 4,
+        "sequence": 4,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 7,
+        "sequence": 7,
+        "waitingTimeMs": 15,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 6,
+        "sequence": 6,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 210,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      }
+    ]
+  },
+  "createdAt": "2026-05-14T11:20:55.818Z",
+  "config": {
+    "concurrency": 3,
+    "totalRequests": 20
+  }
+}

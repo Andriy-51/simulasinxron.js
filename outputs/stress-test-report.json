@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-05-14T07:27:47.211Z",
+  "workload": {
+    "mode": "demo",
+    "totalRequests": 12,
+    "clients": 8,
+    "requestsPerClient": 10,
+    "vipRate": 0.35
+  },
+  "stress": {
+    "iterationCount": 12,
+    "timeoutReached": false,
+    "elapsedSeconds": 0,
+    "processed": 12,
+    "failed": 0,
+    "maxPending": 12
+  },
+  "performance": {
+    "throughput": 0,
+    "failureRate": 0
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-05-14T07:13:18.189Z",
+  "snapshotPath": "C:\\Users\\balic\\OneDrive\\Desktop\\kursach\\simulasinxron.js\\snapshots\\platform-snapshot.json",
+  "queue": {
+    "avgWaitingMs": 6.225,
+    "avgProcessingMs": 186.75,
+    "processed": 40,
+    "vipProcessed": 20,
+    "peakQueueSize": 1,
+    "strategy": "priority"
+  },
+  "dashboard": {
+    "timestamp": "2026-05-14T07:13:18.189Z",
+    "elapsedSeconds": 3.387,
+    "queue": {
+      "size": 1,
+      "maxSize": 4,
+      "processed": 40,
+      "pending": 0,
+      "throughput": 11.8098612341305,
+      "avgProcessingMs": 186.75,
+      "minProcessingMs": 105,
+      "maxProcessingMs": 280
+    },
+    "cache": {
+      "hitRate": 100,
+      "hits": 40,
+      "misses": 0,
+      "evictions": 0,
+      "size": 0,
+      "maxSize": 0
+    },
+    "iterators": {
+      "active": 0,
+      "maxConcurrent": 1,
+      "completed": 0,
+      "timeouts": 1
+    },
+    "health": {
+      "score": 100,
+      "errors": 0,
+      "warnings": 0,
+      "snapshots": 1,
+      "restored": 1
+    }
+  },
+  "performance": {
+    "memoization": {
+      "workloadSize": 18,
+      "withoutMemoizeMs": 1,
+      "withMemoizeMs": 0,
+      "improvementPercent": 100,
+      "hitRate": 66.7
+    },
+    "iteratorThroughput": {
+      "maxRequestsBeforeTimeout": 12,
+      "elapsedSeconds": 0.216,
+      "timeoutReached": true
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "generatedAt": "2026-05-14T11:20:56.922Z",
+  "snapshotPath": "C:\\Users\\balic\\OneDrive\\Desktop\\kursach\\simulasinxron.js\\outputs\\snapshots\\platform-snapshot.json",
+  "queue": {
+    "avgWaitingMs": 4.8,
+    "avgProcessingMs": 184,
+    "processed": 20,
+    "vipProcessed": 10,
+    "peakQueueSize": 1,
+    "strategy": "priority"
+  },
+  "queueRawMetrics": [
+    {
+      "requestId": 1,
+      "sequence": 1,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 2,
+      "sequence": 2,
+      "waitingTimeMs": 1,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 3,
+      "sequence": 3,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 165,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 5,
+      "sequence": 5,
+      "waitingTimeMs": 15,
+      "processingTimeMs": 125,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 4,
+      "sequence": 4,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 280,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 7,
+      "sequence": 7,
+      "waitingTimeMs": 15,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 6,
+      "sequence": 6,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 210,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 9,
+      "sequence": 9,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 165,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 8,
+      "sequence": 8,
+      "waitingTimeMs": 1,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 1,
+      "sequence": 1,
+      "waitingTimeMs": 14,
+      "processingTimeMs": 125,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 10,
+      "sequence": 10,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 280,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 3,
+      "sequence": 3,
+      "waitingTimeMs": 1,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 2,
+      "sequence": 2,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 210,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 4,
+      "sequence": 4,
+      "waitingTimeMs": 1,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 5,
+      "sequence": 5,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 165,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 7,
+      "sequence": 7,
+      "waitingTimeMs": 16,
+      "processingTimeMs": 125,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 6,
+      "sequence": 6,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 280,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 9,
+      "sequence": 9,
+      "waitingTimeMs": 16,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 8,
+      "sequence": 8,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 210,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 10,
+      "sequence": 10,
+      "waitingTimeMs": 16,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    }
+  ],
+  "dashboard": {
+    "timestamp": "2026-05-14T11:20:56.922Z",
+    "elapsedSeconds": 1.816,
+    "queue": {
+      "size": 1,
+      "maxSize": 4,
+      "processed": 20,
+      "pending": 0,
+      "throughput": 11.013215859030836,
+      "avgProcessingMs": 184,
+      "minProcessingMs": 105,
+      "maxProcessingMs": 280
+    },
+    "cache": {
+      "hitRate": 100,
+      "hits": 20,
+      "misses": 0,
+      "evictions": 0,
+      "size": 0,
+      "maxSize": 0
+    },
+    "iterators": {
+      "active": 0,
+      "maxConcurrent": 1,
+      "completed": 0,
+      "timeouts": 1
+    },
+    "health": {
+      "score": 100,
+      "errors": 0,
+      "warnings": 0,
+      "snapshots": 1,
+      "restored": 1
+    }
+  },
+  "performance": {
+    "memoization": {
+      "workloadSize": 18,
+      "withoutMemoizeMs": 2,
+      "withMemoizeMs": 0,
+      "improvementPercent": 100,
+      "hitRate": 66.7
+    },
+    "iteratorThroughput": {
+      "maxRequestsBeforeTimeout": 12,
+      "elapsedSeconds": 0.216,
+      "timeoutReached": true
+    }
+  }
+}

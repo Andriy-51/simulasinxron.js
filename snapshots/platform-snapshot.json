@@ -1,0 +1,228 @@
+{
+  "cursor": {
+    "items": [
+      {
+        "id": "WL-01",
+        "title": "cache warmup",
+        "priority": 1,
+        "baseMs": 120,
+        "domain": "api"
+      },
+      {
+        "id": "WL-02",
+        "title": "batch import",
+        "priority": 0,
+        "baseMs": 210,
+        "domain": "jobs"
+      },
+      {
+        "id": "WL-03",
+        "title": "priority sync",
+        "priority": 1,
+        "baseMs": 180,
+        "domain": "realtime"
+      },
+      {
+        "id": "WL-04",
+        "title": "report rebuild",
+        "priority": 0,
+        "baseMs": 260,
+        "domain": "analytics"
+      },
+      {
+        "id": "WL-05",
+        "title": "token refresh",
+        "priority": 1,
+        "baseMs": 140,
+        "domain": "auth"
+      },
+      {
+        "id": "WL-06",
+        "title": "cleanup pass",
+        "priority": 0,
+        "baseMs": 190,
+        "domain": "maintenance"
+      }
+    ],
+    "index": 2
+  },
+  "queue": {
+    "concurrency": 3,
+    "totalRequests": 40,
+    "strategy": "priority",
+    "active": 2,
+    "completed": 18,
+    "peakQueueSize": 1,
+    "queueOrderCounter": 20,
+    "queue": [],
+    "metrics": [
+      {
+        "requestId": 1,
+        "sequence": 1,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 3,
+        "sequence": 3,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 2,
+        "sequence": 2,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 5,
+        "sequence": 5,
+        "waitingTimeMs": 16,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 4,
+        "sequence": 4,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 7,
+        "sequence": 7,
+        "waitingTimeMs": 16,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 6,
+        "sequence": 6,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 210,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 9,
+        "sequence": 9,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 8,
+        "sequence": 8,
+        "waitingTimeMs": 2,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 11,
+        "sequence": 11,
+        "waitingTimeMs": 17,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 10,
+        "sequence": 10,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 13,
+        "sequence": 13,
+        "waitingTimeMs": 17,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 12,
+        "sequence": 12,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 210,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 14,
+        "sequence": 14,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 15,
+        "sequence": 15,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 17,
+        "sequence": 17,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 16,
+        "sequence": 16,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 19,
+        "sequence": 19,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      }
+    ]
+  },
+  "createdAt": "2026-05-14T07:13:16.274Z",
+  "config": {
+    "concurrency": 3,
+    "totalRequests": 40
+  }
+}

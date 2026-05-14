@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-05-14T11:20:53.264Z",
+  "version": "1.0.0",
+  "reportId": "report-1778757653264",
+  "sections": [
+    {
+      "type": "comparison",
+      "title": "Queue Strategy Comparison",
+      "comparison": {
+        "Priority": {
+          "processed": 20,
+          "avgWaitingMs": 6.3,
+          "avgProcessingMs": 184,
+          "peakQueue": 1,
+          "memoSpeedupPercent": 100,
+          "iteratorTimeout": true,
+          "cacheHitRate": 100
+        },
+        "FIFO": {
+          "processed": 20,
+          "avgWaitingMs": 4.8,
+          "avgProcessingMs": 184,
+          "peakQueue": 1,
+          "memoSpeedupPercent": 100,
+          "iteratorTimeout": true,
+          "cacheHitRate": 100
+        },
+        "improvement": {
+          "processed": 0,
+          "avgWaitingMs": 23.80952380952381,
+          "avgProcessingMs": 0,
+          "peakQueue": 0,
+          "memoSpeedupPercent": 0,
+          "cacheHitRate": 0
+        }
+      }
+    },
+    {
+      "type": "analysis",
+      "title": "Run A details",
+      "description": "Configuration for run A",
+      "findings": [
+        "{\"label\":\"Priority\",\"queueStrategy\":\"priority\",\"demo\":{\"totalRequests\":20},\"runtime\":{\"queueStrategy\":\"priority\"}}"
+      ]
+    },
+    {
+      "type": "analysis",
+      "title": "Run B details",
+      "description": "Configuration for run B",
+      "findings": [
+        "{\"label\":\"FIFO\",\"queueStrategy\":\"fifo\",\"demo\":{\"totalRequests\":20},\"runtime\":{\"queueStrategy\":\"fifo\"}}"
+      ]
+    }
+  ]
+}

@@ -1,10 +1,18 @@
 class AbortError extends Error {
+  /**
+   * @param {string} [message] - Abort reason.
+   */
   constructor(message = "The operation was aborted") {
     super(message);
     this.name = "AbortError";
   }
 }
 
+/**
+ * Convert an AbortSignal reason into a stable Error instance.
+ * @param {AbortSignal | undefined} signal - Optional abort signal.
+ * @returns {Error}
+ */
 function toAbortError(signal) {
   if (signal && signal.reason instanceof Error) {
     return signal.reason;
@@ -13,6 +21,12 @@ function toAbortError(signal) {
   return new AbortError(signal && typeof signal.reason === "string" ? signal.reason : undefined);
 }
 
+/**
+ * Validate the async map inputs before execution.
+ * @param {Array} items - Source items.
+ * @param {Function} mapper - Transformation callback.
+ * @param {Function | undefined} callback - Optional node-style callback.
+ */
 function validateArrayVariantInput(items, mapper, callback) {
   if (!Array.isArray(items)) {
     throw new Error("items must be an array");
@@ -27,6 +41,14 @@ function validateArrayVariantInput(items, mapper, callback) {
   }
 }
 
+/**
+ * Internal runner that powers asyncMap and asyncMapCallback.
+ * @param {Array} items - Source items.
+ * @param {Function} mapper - Async mapping function.
+ * @param {object} options - Runtime options.
+ * @param {Function} settle - Settles the overall operation.
+ * @returns {Function} Cancel function.
+ */
 function runAsyncMap(items, mapper, options, settle) {
   const signal = options.signal;
   const delayMs = Number.isFinite(options.delayMs) && options.delayMs >= 0 ? options.delayMs : 0;
@@ -128,6 +150,14 @@ function runAsyncMap(items, mapper, options, settle) {
   return () => settleOnce(new AbortError("Cancelled"));
 }
 
+/**
+ * Node-style async map helper that reports results through a callback.
+ * @param {Array} items - Source items.
+ * @param {Function} mapper - Transformation callback.
+ * @param {Function} callback - Node-style completion callback.
+ * @param {object} [options] - Optional execution controls.
+ * @returns {Function} Cancel function.
+ */
 function asyncMapCallback(items, mapper, callback, options = {}) {
   validateArrayVariantInput(items, mapper, callback);
 
@@ -136,6 +166,13 @@ function asyncMapCallback(items, mapper, callback, options = {}) {
   });
 }
 
+/**
+ * Promise-based async map helper with optional delay and abort support.
+ * @param {Array} items - Source items.
+ * @param {Function} mapper - Transformation callback.
+ * @param {object} [options] - Optional execution controls.
+ * @returns {Promise<Array>} Transformed items.
+ */
 function asyncMap(items, mapper, options = {}) {
   validateArrayVariantInput(items, mapper);
 
@@ -151,6 +188,10 @@ function asyncMap(items, mapper, options = {}) {
   });
 }
 
+/**
+ * Create sample cases that demonstrate the supported async map styles.
+ * @returns {object} Demo cases.
+ */
 function createAsyncMapDemoCases() {
   return {
     callbackExample: {

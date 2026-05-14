@@ -1,7 +1,17 @@
 const { logLine } = require("../logs/logger");
 const { now } = require("../utils/delay");
 
+/**
+ * Priority-aware request queue with concurrency control and basic metrics.
+ */
 class QueueManager {
+  /**
+   * @param {object} options - Queue configuration.
+   * @param {number} options.concurrency - Maximum concurrent workers.
+   * @param {number} options.totalRequests - Total requests expected in the run.
+   * @param {Function} options.processRequest - Request processing callback.
+   * @param {string} [options.strategy] - Queue ordering strategy.
+   */
   constructor({ concurrency, totalRequests, processRequest, strategy = "priority" }) {
     this.concurrency = Math.max(1, concurrency);
     this.totalRequests = totalRequests;
@@ -19,6 +29,10 @@ class QueueManager {
     });
   }
 
+  /**
+   * Capture the current queue state for later restore.
+   * @returns {object}
+   */
   snapshot() {
     return {
       concurrency: this.concurrency,
@@ -33,6 +47,10 @@ class QueueManager {
     };
   }
 
+  /**
+   * Restore the queue state from a snapshot object.
+   * @param {object} snapshot - Snapshot returned by snapshot().
+   */
   restore(snapshot) {
     if (!snapshot || !Array.isArray(snapshot.queue) || !Array.isArray(snapshot.metrics)) {
       throw new Error("invalid queue snapshot");
@@ -52,6 +70,10 @@ class QueueManager {
     });
   }
 
+  /**
+   * Sort the queue according to the configured strategy.
+   * @private
+   */
   _sortQueue() {
     const strategy = String(this.strategy || "priority").toLowerCase();
 
@@ -68,6 +90,10 @@ class QueueManager {
     });
   }
 
+  /**
+   * Add a request to the queue and attempt to dispatch workers.
+   * @param {object} request - Incoming request.
+   */
   enqueue(request) {
     const entry = { ...request, __queueOrder: this._queueOrderCounter += 1 };
     this.queue.push(entry);
@@ -82,6 +108,13 @@ class QueueManager {
     this.pump();
   }
 
+  /**
+   * Process a single queued request.
+   * @param {object} request - Request to process.
+   * @param {number} workerId - Worker identifier.
+   * @param {Function} [processRequest] - Optional override callback.
+   * @returns {Promise<void>}
+   */
   async runOne(request, workerId, processRequest) {
     const startedAt = now();
     const waitingTimeMs = startedAt - request.arrivedAt;
@@ -104,6 +137,9 @@ class QueueManager {
     logLine(`Request #${request.sequence} completed in ${processingTimeMs} ms`);
   }
 
+  /**
+   * Pump queued work into active workers until capacity is exhausted.
+   */
   pump() {
     while (this.active < this.concurrency && this.queue.length > 0) {
       const request = this.queue.shift();
@@ -125,6 +161,10 @@ class QueueManager {
     }
   }
 
+  /**
+   * Wait until the queue has processed the expected number of requests.
+   * @returns {Promise<void>}
+   */
   async waitForDone() {
     if (this.completed === this.totalRequests && this.active === 0 && this.queue.length === 0) {
       return;
@@ -132,6 +172,10 @@ class QueueManager {
     await this.done;
   }
 
+  /**
+   * Summarize the collected queue metrics.
+   * @returns {object}
+   */
   summary() {
     const processed = this.metrics.length;
     const totalWaiting = this.metrics.reduce((sum, item) => sum + item.waitingTimeMs, 0);

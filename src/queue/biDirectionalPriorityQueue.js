@@ -14,6 +14,9 @@ function normalizeMode(mode) {
   return String(mode || "highest").toLowerCase();
 }
 
+/**
+ * Bi-directional priority queue with FIFO ordering within each priority bucket.
+ */
 class BiDirectionalPriorityQueue {
   constructor() {
     this._head = null;
@@ -29,10 +32,20 @@ class BiDirectionalPriorityQueue {
     return this._size;
   }
 
+  /**
+   * Check whether the queue is empty.
+   * @returns {boolean}
+   */
   isEmpty() {
     return this._size === 0;
   }
 
+  /**
+   * Add an item to the queue with the given priority.
+   * @param {*} item - Item to enqueue.
+   * @param {number} priority - Numeric priority value.
+   * @returns {*} The queued item.
+   */
   enqueue(item, priority) {
     if (!Number.isFinite(priority)) {
       throw new Error("priority must be a finite number");
@@ -46,11 +59,21 @@ class BiDirectionalPriorityQueue {
     return node.item;
   }
 
+  /**
+   * Inspect the next item without removing it.
+   * @param {string} [mode] - Selection mode such as highest or lowest.
+   * @returns {*|undefined}
+   */
   peek(mode = "highest") {
     const node = this._resolveNode(mode);
     return node ? node.item : undefined;
   }
 
+  /**
+   * Remove and return the next item according to the chosen mode.
+   * @param {string} [mode] - Selection mode such as highest or lowest.
+   * @returns {*|undefined}
+   */
   dequeue(mode = "highest") {
     const node = this._resolveNode(mode);
     if (!node) {
@@ -61,6 +84,9 @@ class BiDirectionalPriorityQueue {
     return node.item;
   }
 
+  /**
+   * Remove every item from the queue.
+   */
   clear() {
     this._head = null;
     this._tail = null;

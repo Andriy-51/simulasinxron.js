@@ -13,6 +13,7 @@ const { createRoundRobinState, saveSnapshot, loadSnapshot } = require("./system/
 const { runPlatformDemo } = require("./platform/simulationPlatform");
 const { buildWorkload, compareQueueStrategies, runQueueComparisonDemo } = require("./analysis/queueComparison");
 const { createFaultInjector, runWithRetry, runChaosEngineeringDemo } = require("./chaos/faultInjection");
+const { runStressTestMode } = require("./stress/stressTestMode");
 
 module.exports = {
   roundRobinGenerator,
@@ -52,7 +53,8 @@ module.exports = {
   runQueueComparisonDemo,
   createFaultInjector,
   runWithRetry,
-  runChaosEngineeringDemo
+  runChaosEngineeringDemo,
+  runStressTestMode
 };
 
 // additional exports for coursework demo and new modules

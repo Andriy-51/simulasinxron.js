@@ -12,8 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 
 io.on('connection', (socket) => {
-  console.log('Web client connected:', socket.id);
-  socket.on('disconnect', () => console.log('Web client disconnected:', socket.id));
+  socket.on('disconnect', () => {});
 });
 
 app.post('/api/run', async (req, res) => {

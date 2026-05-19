@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-19T10:42:59.844Z",
+  "generatedAt": "2026-05-19T10:59:39.844Z",
   "snapshotPath": "C:\\Users\\balic\\OneDrive\\Desktop\\kursach\\simulasinxron.js\\outputs\\snapshots\\platform-snapshot.json",
   "queue": {
-    "avgWaitingMs": 7.1,
+    "avgWaitingMs": 4.25,
     "avgProcessingMs": 186.75,
     "processed": 40,
     "vipProcessed": 20,
@@ -20,15 +20,6 @@
       "strategy": "priority"
     },
     {
-      "requestId": 2,
-      "sequence": 2,
-      "waitingTimeMs": 1,
-      "processingTimeMs": 230,
-      "priority": 0,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
       "requestId": 3,
       "sequence": 3,
       "waitingTimeMs": 0,
@@ -38,9 +29,18 @@
       "strategy": "priority"
     },
     {
+      "requestId": 2,
+      "sequence": 2,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
       "requestId": 5,
       "sequence": 5,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 32,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -58,7 +58,7 @@
     {
       "requestId": 7,
       "sequence": 7,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 17,
       "processingTimeMs": 105,
       "priority": 1,
       "deadlineMs": null,
@@ -67,7 +67,7 @@
     {
       "requestId": 6,
       "sequence": 6,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 210,
       "priority": 0,
       "deadlineMs": null,
@@ -76,7 +76,7 @@
     {
       "requestId": 9,
       "sequence": 9,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 165,
       "priority": 1,
       "deadlineMs": null,
@@ -85,7 +85,7 @@
     {
       "requestId": 8,
       "sequence": 8,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 15,
       "processingTimeMs": 230,
       "priority": 0,
       "deadlineMs": null,
@@ -94,7 +94,7 @@
     {
       "requestId": 11,
       "sequence": 11,
-      "waitingTimeMs": 46,
+      "waitingTimeMs": 17,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -110,6 +110,15 @@
       "strategy": "priority"
     },
     {
+      "requestId": 13,
+      "sequence": 13,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
       "requestId": 12,
       "sequence": 12,
       "waitingTimeMs": 1,
@@ -119,18 +128,9 @@
       "strategy": "priority"
     },
     {
-      "requestId": 13,
-      "sequence": 13,
-      "waitingTimeMs": 47,
-      "processingTimeMs": 105,
-      "priority": 1,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
       "requestId": 15,
       "sequence": 15,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 165,
       "priority": 1,
       "deadlineMs": null,
@@ -148,7 +148,7 @@
     {
       "requestId": 17,
       "sequence": 17,
-      "waitingTimeMs": 47,
+      "waitingTimeMs": 1,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -164,20 +164,29 @@
       "strategy": "priority"
     },
     {
+      "requestId": 19,
+      "sequence": 19,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 105,
+      "priority": 1,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
       "requestId": 18,
       "sequence": 18,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 1,
       "processingTimeMs": 210,
       "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
     },
     {
-      "requestId": 19,
-      "sequence": 19,
-      "waitingTimeMs": 46,
-      "processingTimeMs": 105,
-      "priority": 1,
+      "requestId": 20,
+      "sequence": 20,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 230,
+      "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
     },
@@ -191,18 +200,9 @@
       "strategy": "priority"
     },
     {
-      "requestId": 20,
-      "sequence": 20,
-      "waitingTimeMs": 32,
-      "processingTimeMs": 230,
-      "priority": 0,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
       "requestId": 3,
       "sequence": 3,
-      "waitingTimeMs": 32,
+      "waitingTimeMs": 30,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -211,17 +211,8 @@
     {
       "requestId": 2,
       "sequence": 2,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 280,
-      "priority": 0,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
-      "requestId": 4,
-      "sequence": 4,
-      "waitingTimeMs": 1,
-      "processingTimeMs": 210,
       "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
@@ -229,17 +220,17 @@
     {
       "requestId": 5,
       "sequence": 5,
-      "waitingTimeMs": 15,
+      "waitingTimeMs": 0,
       "processingTimeMs": 105,
       "priority": 1,
       "deadlineMs": null,
       "strategy": "priority"
     },
     {
-      "requestId": 6,
-      "sequence": 6,
+      "requestId": 4,
+      "sequence": 4,
       "waitingTimeMs": 0,
-      "processingTimeMs": 230,
+      "processingTimeMs": 210,
       "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
@@ -254,9 +245,18 @@
       "strategy": "priority"
     },
     {
+      "requestId": 6,
+      "sequence": 6,
+      "waitingTimeMs": 1,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
       "requestId": 9,
       "sequence": 9,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -283,17 +283,8 @@
     {
       "requestId": 10,
       "sequence": 10,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 210,
-      "priority": 0,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
-      "requestId": 12,
-      "sequence": 12,
-      "waitingTimeMs": 1,
-      "processingTimeMs": 230,
       "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
@@ -301,16 +292,25 @@
     {
       "requestId": 13,
       "sequence": 13,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 1,
       "processingTimeMs": 165,
       "priority": 1,
       "deadlineMs": null,
       "strategy": "priority"
     },
     {
+      "requestId": 12,
+      "sequence": 12,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 230,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
       "requestId": 15,
       "sequence": 15,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 33,
       "processingTimeMs": 125,
       "priority": 1,
       "deadlineMs": null,
@@ -328,7 +328,7 @@
     {
       "requestId": 17,
       "sequence": 17,
-      "waitingTimeMs": 0,
+      "waitingTimeMs": 16,
       "processingTimeMs": 105,
       "priority": 1,
       "deadlineMs": null,
@@ -337,8 +337,17 @@
     {
       "requestId": 16,
       "sequence": 16,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 210,
+      "priority": 0,
+      "deadlineMs": null,
+      "strategy": "priority"
+    },
+    {
+      "requestId": 18,
+      "sequence": 18,
+      "waitingTimeMs": 0,
+      "processingTimeMs": 230,
       "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
@@ -346,18 +355,9 @@
     {
       "requestId": 19,
       "sequence": 19,
-      "waitingTimeMs": 1,
+      "waitingTimeMs": 0,
       "processingTimeMs": 165,
       "priority": 1,
-      "deadlineMs": null,
-      "strategy": "priority"
-    },
-    {
-      "requestId": 18,
-      "sequence": 18,
-      "waitingTimeMs": 1,
-      "processingTimeMs": 230,
-      "priority": 0,
       "deadlineMs": null,
       "strategy": "priority"
     },
@@ -372,14 +372,14 @@
     }
   ],
   "dashboard": {
-    "timestamp": "2026-05-19T10:42:59.844Z",
-    "elapsedSeconds": 3.451,
+    "timestamp": "2026-05-19T10:59:39.844Z",
+    "elapsedSeconds": 3.364,
     "queue": {
       "size": 1,
       "maxSize": 4,
       "processed": 40,
       "pending": 0,
-      "throughput": 11.590843233845263,
+      "throughput": 11.890606420927467,
       "avgProcessingMs": 186.75,
       "minProcessingMs": 105,
       "maxProcessingMs": 280
@@ -416,15 +416,15 @@
     "snapshots": 1,
     "restored": 1,
     "errors": 0,
-    "avgWaitMs": 7.225,
+    "avgWaitMs": 4.375,
     "avgProcessMs": 186.75
   },
   "performance": {
     "memoization": {
       "workloadSize": 18,
-      "withoutMemoizeMs": 2,
+      "withoutMemoizeMs": 1,
       "withMemoizeMs": 1,
-      "improvementPercent": 50,
+      "improvementPercent": 0,
       "hitRate": 66.7
     },
     "iteratorThroughput": {

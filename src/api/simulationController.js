@@ -1,5 +1,13 @@
 const { runPlatformDemo } = require("../platform/simulationPlatform");
 
+/**
+ * Start the platform simulation from an HTTP request and stream updates to the
+ * provided Socket.io instance.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('socket.io').Server} io
+ * @returns {Promise<void>}
+ */
 async function startSimulation(req, res, io) {
   const options = req.body || {};
 

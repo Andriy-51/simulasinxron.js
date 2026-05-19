@@ -1,5 +1,9 @@
 const { chalk, renderBanner, renderCard, renderKeyValueRows, renderSection, renderTable } = require("../ui/terminalUi");
 
+/**
+ * Collects live monitoring data for queue, cache, processing and resilience
+ * events, and can optionally emit those updates to a websocket transport.
+ */
 class SystemMonitor {
   constructor(label = "Simulation platform", options = {}) {
     this.label = label;
@@ -73,7 +77,6 @@ class SystemMonitor {
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      // best-effort only
     }
   }
 

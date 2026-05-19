@@ -11,6 +11,11 @@ const { createRoundRobinState, saveSnapshot, loadSnapshot } = require("../system
 const { chalk, colorForPriority, renderBanner, renderCard, renderDashboardSnapshot, renderList, renderSection, renderTable } = require("../ui/terminalUi");
 const { sleep, now } = require("../utils/delay");
 
+/**
+ * Build a deterministic set of workload templates that represent different
+ * helpdesk request categories used by the simulation.
+ * @returns {Array<{id:string,title:string,priority:number,baseMs:number,domain:string}>}
+ */
 function createWorkloadTemplates() {
   return [
     { id: "WL-01", title: "cache warmup", priority: 1, baseMs: 120, domain: "api" },
@@ -22,6 +27,12 @@ function createWorkloadTemplates() {
   ];
 }
 
+/**
+ * Simulate an expensive estimation step without memoization.
+ * @param {string} domain
+ * @param {number} baseMs
+ * @returns {{domain:string,estimateMs:number}}
+ */
 function createRawEstimator(domain, baseMs) {
   let score = 0;
 
@@ -32,10 +43,20 @@ function createRawEstimator(domain, baseMs) {
   return { domain, estimateMs: baseMs + (score % 30) };
 }
 
+/**
+ * Create a memoized estimator that caches the raw workload estimate.
+ * @returns {Function}
+ */
 function createCachedEstimator() {
   return memoize(createRawEstimator, { maxSize: 16, evictionPolicy: "lru", ttlMs: 5_000 });
 }
 
+/**
+ * Measure how long an estimator takes to process the provided workload.
+ * @param {Function} runFn
+ * @param {Array<{domain:string,baseMs:number}>} workload
+ * @returns {number}
+ */
 function benchmarkEstimator(runFn, workload) {
   const startedAt = now();
 
@@ -46,6 +67,12 @@ function benchmarkEstimator(runFn, workload) {
   return now() - startedAt;
 }
 
+/**
+ * Measure iterator throughput and record timeout/completion on the dashboard.
+ * @param {DashboardMetrics} dashboard
+ * @param {Array<string>} values
+ * @returns {object}
+ */
 function runIteratorThroughputProbe(dashboard, values) {
   dashboard.trackIteratorStart();
 
@@ -61,6 +88,12 @@ function runIteratorThroughputProbe(dashboard, values) {
   return stats;
 }
 
+/**
+ * Render a consistent dashboard snapshot to the terminal.
+ * @param {DashboardMetrics} dashboard
+ * @param {string} label
+ * @param {string} subtitle
+ */
 function snapshotDashboard(dashboard, label, subtitle) {
   renderDashboardSnapshot({
     ...dashboard.getSummary(),
@@ -69,6 +102,12 @@ function snapshotDashboard(dashboard, label, subtitle) {
   });
 }
 
+/**
+ * Run the full helpdesk platform simulation with live metrics, snapshot/resume,
+ * report generation and optional WebSocket emission.
+ * @param {object} options
+ * @returns {Promise<object>}
+ */
 async function runPlatformDemo(options = {}) {
   const config = await loadConfig();
   const runtimeConfig = {
@@ -151,13 +190,11 @@ async function runPlatformDemo(options = {}) {
     systemMonitor.trackEvent("request.enqueued", { id: request.id, priority: request.priority });
   });
 
-  // emit enqueue events if an emitter is provided (e.g., socket.io)
   if (emitter && typeof emitter.emit === "function") {
     channel.on("request", (request) => {
       try {
         emitter.emit("request.enqueued", request);
       } catch (e) {
-        // ignore emitter errors
       }
     });
   }
@@ -165,7 +202,6 @@ async function runPlatformDemo(options = {}) {
   const dashboardTimer = setInterval(() => {
     const summary = dashboard.getSummary();
     const monitorSummary = systemMonitor.getSummary();
-    // emit metrics for web dashboard
     if (emitter && typeof emitter.emit === "function") {
       try {
         emitter.emit("platform.metrics", { dashboard: summary, monitor: monitorSummary });
@@ -276,7 +312,6 @@ async function runPlatformDemo(options = {}) {
       try { emitter.emit("report.generated", { path: reportPath, report }); } catch (e) {}
     }
 
-    // persist report to local SQLite DB if available
     try {
       const db = require('../infrastructure/db');
       const id = await db.saveReport(report, reportPath);
@@ -285,7 +320,6 @@ async function runPlatformDemo(options = {}) {
         try { emitter.emit('db.report.saved', { id, path: reportPath }); } catch (e) {}
       }
     } catch (e) {
-      // ignore persistence errors
       console.error('Failed to persist report to DB:', e && e.message);
     }
 

@@ -6,6 +6,7 @@ const { QueueManager } = require("../server/queue");
 const { createReactiveChannel } = require("../reactive/reactiveCommunication");
 const { loadConfig } = require("../system/config");
 const { DashboardMetrics } = require("../system/dashboardMetrics");
+const { SystemMonitor } = require("../system/monitor");
 const { createRoundRobinState, saveSnapshot, loadSnapshot } = require("../system/snapshot");
 const { chalk, colorForPriority, renderBanner, renderCard, renderDashboardSnapshot, renderList, renderSection, renderTable } = require("../ui/terminalUi");
 const { sleep, now } = require("../utils/delay");
@@ -78,7 +79,9 @@ async function runPlatformDemo(options = {}) {
     ...config.demo,
     ...(options.demo || {})
   };
+  const emitter = options.emitter || null;
   const dashboard = new DashboardMetrics("Simulation platform dashboard");
+  const systemMonitor = new SystemMonitor("Simulation platform monitor", { emitter });
   const channel = createReactiveChannel();
   const templates = createWorkloadTemplates();
   const estimator = createCachedEstimator();
@@ -100,17 +103,21 @@ async function runPlatformDemo(options = {}) {
       const cacheStats = estimator.getStats();
       if (cacheStats.hits > previousCacheStats.hits) {
         dashboard.trackCacheHit();
+        systemMonitor.trackCache(true);
       } else {
         dashboard.trackCacheMiss();
+        systemMonitor.trackCache(false);
       }
       previousCacheStats = cacheStats;
 
       const processingTimeMs = Math.max(90, cachedEstimate.estimateMs + (request.priority > 0 ? -15 : 20));
       dashboard.trackProcessingTime(processingTimeMs);
+      systemMonitor.trackProcessing(request.arrivedAt ? now() - request.arrivedAt : 0, processingTimeMs);
       await sleep(processingTimeMs);
       dashboard.trackQueueProcessed();
       dashboard.trackQueueSize(queue.queue.length + queue.active);
       dashboard.trackQueuePending(queue.queue.length);
+      systemMonitor.trackEvent("request.processed", { id: request.id, priority: request.priority });
       return processingTimeMs;
     }
   });
@@ -140,9 +147,31 @@ async function runPlatformDemo(options = {}) {
     queue.enqueue(request);
     dashboard.trackQueueSize(queue.queue.length + queue.active);
     dashboard.trackQueuePending(queue.queue.length);
+    systemMonitor.trackQueueLength(queue.queue.length + queue.active);
+    systemMonitor.trackEvent("request.enqueued", { id: request.id, priority: request.priority });
   });
 
+  // emit enqueue events if an emitter is provided (e.g., socket.io)
+  if (emitter && typeof emitter.emit === "function") {
+    channel.on("request", (request) => {
+      try {
+        emitter.emit("request.enqueued", request);
+      } catch (e) {
+        // ignore emitter errors
+      }
+    });
+  }
+
   const dashboardTimer = setInterval(() => {
+    const summary = dashboard.getSummary();
+    const monitorSummary = systemMonitor.getSummary();
+    // emit metrics for web dashboard
+    if (emitter && typeof emitter.emit === "function") {
+      try {
+        emitter.emit("platform.metrics", { dashboard: summary, monitor: monitorSummary });
+      } catch (e) {}
+    }
+
     snapshotDashboard(dashboard, "Live platform dashboard", "queue, cache and iterator metrics");
   }, liveRefreshMs);
 
@@ -167,6 +196,9 @@ async function runPlatformDemo(options = {}) {
       };
 
       channel.emit("request", request);
+      if (emitter && typeof emitter.emit === "function") {
+        try { emitter.emit("request.generated", request); } catch (e) {}
+      }
       await sleep(45 + Math.floor(Math.random() * 40));
     }
   };
@@ -190,11 +222,13 @@ async function runPlatformDemo(options = {}) {
     await fs.mkdir(snapshotDir, { recursive: true });
     await saveSnapshot(snapshotPath, snapshot);
     dashboard.trackSnapshot();
+    systemMonitor.trackSnapshot();
 
     const loadedSnapshot = await loadSnapshot(snapshotPath);
     cursor.restore(loadedSnapshot.cursor);
     queue.restore(loadedSnapshot.queue);
     dashboard.trackRestore();
+    systemMonitor.trackRestore();
 
     const remaining = Math.max(0, demoConfig.totalRequests - firstWave);
     await emitWorkload(remaining, "RESUME");
@@ -211,12 +245,14 @@ async function runPlatformDemo(options = {}) {
 
     const queueSummary = queue.summary();
     const dashboardSummary = dashboard.getSummary();
+    const monitorSummary = systemMonitor.getSummary();
     const report = {
       generatedAt: new Date().toISOString(),
       snapshotPath,
       queue: queueSummary,
       queueRawMetrics: queue.metrics,
       dashboard: dashboardSummary,
+      monitor: monitorSummary,
       performance: {
         memoization: {
           workloadSize: memoizedWorkload.length,
@@ -235,6 +271,23 @@ async function runPlatformDemo(options = {}) {
 
     await fs.mkdir(reportDir, { recursive: true });
     await fs.writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+
+    if (emitter && typeof emitter.emit === "function") {
+      try { emitter.emit("report.generated", { path: reportPath, report }); } catch (e) {}
+    }
+
+    // persist report to local SQLite DB if available
+    try {
+      const db = require('../infrastructure/db');
+      const id = await db.saveReport(report, reportPath);
+      await db.logEvent('info', 'report_saved', { id, path: reportPath });
+      if (emitter && typeof emitter.emit === "function") {
+        try { emitter.emit('db.report.saved', { id, path: reportPath }); } catch (e) {}
+      }
+    } catch (e) {
+      // ignore persistence errors
+      console.error('Failed to persist report to DB:', e && e.message);
+    }
 
     renderSection("Platform results", chalk.green);
     renderTable(

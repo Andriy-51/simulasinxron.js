@@ -1,253 +1,73 @@
 # Simulasinxron.js
 
-Курсова робота з асинхронного програмування в JavaScript, побудована навколо двох рівнів:
-- базових навчальних модулів: кеш, черга, async-обробка, потоки, реактивна комунікація;
-- практичного кейсу, де ці модулі використовуються як модель реального helpdesk-процесу з SLA, пріоритетами і метриками.
+Програмний комплекс для дослідження, аналізу та оптимізації асинхронних архітектурних патернів на прикладі симуляції Helpdesk-системи високого навантаження.
 
-Окремо проект має polished console UI: рамки, таблиці, картки, кольорові секції і акуратне меню, щоб показ на захисті виглядав як готовий продукт, а не сирий скрипт. Кореневий [index.js](index.js) тепер є центральною точкою входу: з нього можна запускати сценарії, налаштовувати параметри і отримувати звіти в `outputs/`.
+## Мета роботи
 
-## Що тут є
+Метою проєкту є моделювання поведінки серверної helpdesk-платформи за умов змінного навантаження, пріоритетної обробки звернень, часткових збоїв, кешування, моніторингу, збереження конфігурації та генерації звітів.
 
-- `cache/memoize.js` - кешування результатів функцій з LRU, LFU і TTL
-- `queue/biDirectionalPriorityQueue.js` - черга з кількома режимами вибірки
-- `async/asyncArrayVariants.js` - асинхронна обробка масивів
-- `streams/largeDataProcessing.js` - обробка великих обсягів даних
-- `reactive/reactiveCommunication.js` - подієва комунікація та Observable-патерн
-- `server/server.js` - симуляція серверної обробки запитів
-- `server/queue.js` - менеджер пріоритетної черги і метрик
-- `proxy/authProxy.js` - auth proxy для API з політиками доступу
-- `decorators/loggingDecorator.js` - logging decorator з рівнями логування
-- `system/config.js` - завантаження конфігурації з `config.json` або env
-- `system/monitor.js` - live dashboard для метрик платформи
-- `system/snapshot.js` - snapshot / restore стану черги та round-robin
-- `platform/simulationPlatform.js` - platform demo з моніторингом і resume
-- `analysis/queueComparison.js` - порівняння FIFO та priority queue з аналітичним звітом
-- `chaos/faultInjection.js` - chaos engineering demo з fault injection і retry
-- `stress/stressTestMode.js` - stress test mode з peak load, timeout tracking і fault injection
-- `simulation/requestGenerator.js` - генерація вхідного потоку запитів
-- `examples/courseworkMenu.js` - інтерактивне меню з усіма прикладами
-- `examples/helpdeskScenario.js` - практичний сценарій helpdesk
+## Об'єкт і предмет дослідження
 
-## Додаткові практичні модулі
+Об'єкт дослідження — процеси асинхронної обробки звернень у серверній інформаційній системі.
 
-### Auth proxy для API
+Предмет дослідження — застосування JavaScript-патернів та інфраструктурних механізмів для моделювання helpdesk-процесів з урахуванням черг, пріоритетів, SLA, моніторингу, стійкості та persistence layer.
 
-Файл [src/proxy/authProxy.js](src/proxy/authProxy.js) показує, як проміжний шар може:
+## Структура рішення
 
-- інжектити credentials у запити;
-- працювати з API key, JWT і OAuth;
-- оновлювати токен, якщо він протермінувався;
-- обмежувати частоту запитів;
-- логувати події проксі в реальному часі.
+- `src/platform/simulationPlatform.js` — основний сценарій симуляції платформи.
+- `src/system/monitor.js` — збір і трансляція метрик моніторингу.
+- `src/api/simulationController.js` — HTTP-контролер запуску симуляції.
+- `src/web/server.js` — Express + Socket.io сервер для веб-дешборду.
+- `public/index.html`, `public/app.js`, `public/style.css` — веб-інтерфейс з графіками в реальному часі.
+- `src/infrastructure/db.js` — локальна SQLite-підсистема для звітів і логів.
+- `Dockerfile`, `docker-compose.yml` — контейнеризація проєкту.
 
-### Logging decorator
+## Функціональні можливості
 
-Файл [src/decorators/loggingDecorator.js](src/decorators/loggingDecorator.js) показує, як:
-
-- обгорнути sync або async функцію;
-- задати рівень логування INFO / DEBUG / ERROR;
-- друкувати аргументи, результат і тривалість виконання;
-- писати логи в console, file або memory sink;
-- вмикати режим only-errors.
-
-### Simulation platform
-
-Файл [src/platform/simulationPlatform.js](src/platform/simulationPlatform.js) об'єднує одразу кілька модулів у платформу:
-
-- завантажує runtime-параметри з [config.json](config.json) або змінних середовища;
-- читає секрети та overrides з `.env`;
-- збирає live-метрики в [system/monitor.js](src/system/monitor.js);
-- зберігає snapshot стану черги і round-robin у [system/snapshot.js](src/system/snapshot.js);
-- відновлює симуляцію з того самого місця;
-- записує фінальний звіт у `outputs/`.
-
-### Queue strategy comparison
-
-Файл [src/analysis/queueComparison.js](src/analysis/queueComparison.js) порівнює priority queue і FIFO на одному й тому самому workload:
-
-- рахує середній час очікування і обробки;
-- визначає втрати по SLA / deadline;
-- оцінює cache hit rate через memoize;
-- зберігає JSON report для посилання в пояснювальній записці.
-
-### Chaos engineering
-
-Файл [src/chaos/faultInjection.js](src/chaos/faultInjection.js) показує resilience-підхід:
-
-- inject-ить випадкові фейли або затримки в async-операції;
-- порівнює baseline проти режиму з retry;
-- показує, як retry підвищує частку успішних обробок;
-- формує окремий JSON report.
-
-## UI/UX для демонстрації
-
-У консолі використовується стилізований текстовий інтерфейс:
-
-- великий banner з назвою курсової;
-- картки для пояснення сценаріїв;
-- таблиці для списку тікетів;
-- кольорові секції для метрик і статусів;
-- окремі підказки, які допомагають швидко показати найсильніші частини проекту.
-
-## Чому це вже не просто імітація
-
-У проекті є не тільки демонстрація окремих лабораторних модулів, а й приклад, який можна показувати як бізнес-сценарій:
-
-- тікети підтримки від різних клієнтів;
-- пріоритети для термінових звернень;
-- різні типи задач: login, billing, payment, integration, report, shipping;
-- оцінка SLA для кожного звернеgit push -u origin mainння;
-- статистика по черзі, середньому часу очікування, обробці та порушеннях SLA.
-
-Додатково є аналітичний шар, який порівнює стратегії обробки, і окрема chaos-демонстрація, щоб показати, як система поводиться під навмисними збоями.
-
-Це виглядає набагато ближче до реальної серверної системи, ніж проста абстрактна симуляція.
+- симуляція Helpdesk-навантаження з чергою та пріоритетами;
+- live dashboard у браузері з графіками `Chart.js`;
+- WebSocket-трансляція стану системи через `Socket.io`;
+- генерація звітів у `outputs/`;
+- збереження звітів і логів у SQLite;
+- запуск у контейнері через Docker Compose.
 
 ## Як запустити
 
-### 1. Інтерактивне меню курсової
+### Локальний запуск веб-інтерфейсу
 
 ```bash
 npm start
 ```
 
-Або напряму:
-
-```bash
-node index.js
-```
-
-Це центральний CLI dashboard, де можна вибрати сценарій і задати параметри перед запуском.
-
-### 2. Практичний helpdesk-кейс
-
-```bash
-node src/examples/helpdeskScenario.js
-```
-
-Або через npm:
-
-```bash
-npm run case-study
-```
-
-### 3. Auth proxy demo
-
-```bash
-npm run auth-proxy-demo
-```
-
-### 4. Logging decorator demo
-
-```bash
-npm run logging-decorator-demo
-```
-
-### 5. Simulation platform demo
-
-```bash
-npm run platform-demo
-```
-
-### 6. Queue insights demo
-
-```bash
-npm run queue-insights-demo
-```
-
-### 7. Chaos engineering demo
-
-```bash
-npm run chaos-demo
-```
-
-### 8. Stress test mode
-
-```bash
-npm run stress-test
-```
-
-### 9. Серверна симуляція запитів
-
-```bash
-node serverSimulator.js --demo --total=100 --concurrency=3 --report=metrics.json
-```
-
-### 10. Тест
-
-```bash
-node tests/smoke-asyncMap.js
-```
-
-```bash
-npm run test:platform
-```
-
-```bash
-npm run test:queue
-```
-
-## Що показує helpdesk case study
-
-Приклад моделює чергу технічної підтримки в робочий пік. Є 10 тікетів від різних клієнтів, частина з них термінові. Кожен тікет має тип задачі та SLA. Після обробки система виводить:
-
-- кількість оброблених тікетів;
-- середній час очікування;
-- середній час обробки;
-- піковий розмір черги;
-- кількість порушень SLA.
-
-Після завершення більшості симуляцій артефакти пишуться в `outputs/`, щоб їх було легко збирати в одному місці для звіту або демо.
-
-## CLI-опції для `serverSimulator.js`
-
-| Опція | Опис | Значення за замовчуванням |
-|-------|------|---------------------------|
-| `--demo` | Запустити випадковий потік запитів | `false` |
-| `--total=N` | Кількість запитів у demo-режимі | `30` |
-| `--clients=N` | Кількість клієнтів | `5` |
-| `--requests=N` | Запитів на одного клієнта | `6` |
-| `--concurrency=N` | Ліміт паралельних worker-ів | `3` |
-| `--vip=F` | Частка термінових запитів | `0.25` |
-| `--label=TEXT` | Назва звіту | `Clients -> Queue -> Server simulation` |
-| `--report=PATH` | Експорт метрик у JSON | `-` |
-
-## Сценарій для захисту
-
-Якщо треба коротко пояснити суть роботи викладачу, можна сказати так:
-
-> У курсoвій зібрано набір асинхронних механізмів JavaScript і показано їх на кількох рівнях: як окремі навчальні модулі, як практичну helpdesk-систему з чергою, пріоритетами, SLA і метриками, як реалістичні інтеграційні приклади з auth proxy і logging decorator, а також як config-driven simulation platform з live dashboard, snapshot/resume і зовнішньою конфігурацією. Тобто це не тільки демонстрація синтаксису, а модель сервісного процесу та інфраструктурних шарів.
-
-## Структура проекту
+Після запуску відкрити браузер за адресою:
 
 ```text
-src/
-├── async/
-├── cache/
-├── consumers/
-├── examples/
-├── generators/
-├── logs/
-├── decorators/
-├── queue/
-├── reactive/
-├── proxy/
-├── analysis/
-├── chaos/
-├── platform/
-├── server/
-├── simulation/
-├── system/
-├── streams/
-└── utils/
+http://localhost:3000
 ```
 
-## Технічна база
+### Запуск симуляції через UI
 
-- Node.js 14+
-- CommonJS
-- async/await
-- generators
-- EventEmitter
+1. Відкрити сторінку dashboard.
+2. Вказати кількість запитів і concurrency.
+3. Натиснути `Start Simulation`.
+4. Спостерігати графіки черги, processed count і SLA compliance.
 
+### Запуск через Docker
 
+```bash
+docker compose up --build
+```
+
+## Результати
+
+Під час виконання симуляції система:
+
+- генерує потік звернень;
+- обробляє їх з урахуванням пріоритетів;
+- веде live-моніторинг стану черги;
+- зберігає фінальний звіт у файл і SQLite;
+- передає метрики у веб-інтерфейс у реальному часі.
+
+## Для захисту
+
+Ключова теза для викладача: це не набір окремих лабораторних, а цілісний програмний комплекс, у якому асинхронні патерни, черги, кеш, proxy, decorators, monitoring, web UI, persistence і Docker працюють як частини однієї helpdesk-системи.

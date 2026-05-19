@@ -1,8 +1,9 @@
 const { chalk, renderBanner, renderCard, renderKeyValueRows, renderSection, renderTable } = require("../ui/terminalUi");
 
 class SystemMonitor {
-  constructor(label = "Simulation platform") {
+  constructor(label = "Simulation platform", options = {}) {
     this.label = label;
+    this.emitter = options.emitter || null;
     this.metrics = {
       queueLength: [],
       cacheHits: 0,
@@ -20,6 +21,7 @@ class SystemMonitor {
 
   trackQueueLength(length) {
     this.metrics.queueLength.push({ ts: Date.now(), value: length });
+    this.emit("monitor.queueLength", { length });
   }
 
   trackCache(hit) {
@@ -28,29 +30,51 @@ class SystemMonitor {
     } else {
       this.metrics.cacheMisses += 1;
     }
+    this.emit("monitor.cache", { hit });
   }
 
   trackEvent(name, detail) {
     this.metrics.events += 1;
     this.timeline.push({ ts: Date.now(), name, detail });
+    this.emit("monitor.event", { name, detail });
   }
 
   trackProcessing(waitMs, processMs) {
     this.metrics.processed += 1;
     this.metrics.waitMs.push(waitMs);
     this.metrics.processMs.push(processMs);
+    this.emit("monitor.processing", { waitMs, processMs });
   }
 
   trackSnapshot() {
     this.metrics.snapshots += 1;
+    this.emit("monitor.snapshot", { snapshots: this.metrics.snapshots });
   }
 
   trackRestore() {
     this.metrics.restored += 1;
+    this.emit("monitor.restore", { restored: this.metrics.restored });
   }
 
   trackError() {
     this.metrics.errors += 1;
+    this.emit("monitor.error", { errors: this.metrics.errors });
+  }
+
+  emit(eventName, payload) {
+    if (!this.emitter || typeof this.emitter.emit !== "function") {
+      return;
+    }
+
+    try {
+      this.emitter.emit(eventName, {
+        label: this.label,
+        ...payload,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      // best-effort only
+    }
   }
 
   getSummary() {

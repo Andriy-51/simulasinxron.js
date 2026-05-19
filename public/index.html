@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simulasinxron — Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Simulasinxron — Live Dashboard</h1>
+    <div class="controls">
+      <label>Requests: <input id="totalRequests" type="number" value="40" min="1"></label>
+      <label>Concurrency: <input id="concurrency" type="number" value="3" min="1"></label>
+      <button id="startBtn">Start Simulation</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="chart-grid">
+      <div class="card">
+        <h3>Queue Length</h3>
+        <canvas id="queueChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Processed Count</h3>
+        <canvas id="processedChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>SLA Compliance (%)</h3>
+        <canvas id="slaChart"></canvas>
+      </div>
+    </section>
+
+    <section class="events card">
+      <h3>Events</h3>
+      <ul id="events"></ul>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

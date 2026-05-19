@@ -44,16 +44,16 @@
         "domain": "maintenance"
       }
     ],
-    "index": 4
+    "index": 2
   },
   "queue": {
     "concurrency": 3,
-    "totalRequests": 20,
+    "totalRequests": 40,
     "strategy": "priority",
-    "active": 3,
-    "completed": 7,
+    "active": 2,
+    "completed": 18,
     "peakQueueSize": 1,
-    "queueOrderCounter": 10,
+    "queueOrderCounter": 20,
     "queue": [],
     "metrics": [
       {
@@ -86,7 +86,7 @@
       {
         "requestId": 5,
         "sequence": 5,
-        "waitingTimeMs": 15,
+        "waitingTimeMs": 0,
         "processingTimeMs": 125,
         "priority": 1,
         "deadlineMs": null,
@@ -95,7 +95,7 @@
       {
         "requestId": 4,
         "sequence": 4,
-        "waitingTimeMs": 0,
+        "waitingTimeMs": 1,
         "processingTimeMs": 280,
         "priority": 0,
         "deadlineMs": null,
@@ -104,7 +104,7 @@
       {
         "requestId": 7,
         "sequence": 7,
-        "waitingTimeMs": 15,
+        "waitingTimeMs": 0,
         "processingTimeMs": 105,
         "priority": 1,
         "deadlineMs": null,
@@ -113,6 +113,105 @@
       {
         "requestId": 6,
         "sequence": 6,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 210,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 9,
+        "sequence": 9,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 8,
+        "sequence": 8,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 11,
+        "sequence": 11,
+        "waitingTimeMs": 46,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 10,
+        "sequence": 10,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 12,
+        "sequence": 12,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 210,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 13,
+        "sequence": 13,
+        "waitingTimeMs": 47,
+        "processingTimeMs": 105,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 15,
+        "sequence": 15,
+        "waitingTimeMs": 1,
+        "processingTimeMs": 165,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 14,
+        "sequence": 14,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 230,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 17,
+        "sequence": 17,
+        "waitingTimeMs": 47,
+        "processingTimeMs": 125,
+        "priority": 1,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 16,
+        "sequence": 16,
+        "waitingTimeMs": 0,
+        "processingTimeMs": 280,
+        "priority": 0,
+        "deadlineMs": null,
+        "strategy": "priority"
+      },
+      {
+        "requestId": 18,
+        "sequence": 18,
         "waitingTimeMs": 0,
         "processingTimeMs": 210,
         "priority": 0,
@@ -121,9 +220,9 @@
       }
     ]
   },
-  "createdAt": "2026-05-14T11:20:55.818Z",
+  "createdAt": "2026-05-19T10:42:57.880Z",
   "config": {
     "concurrency": 3,
-    "totalRequests": 20
+    "totalRequests": 40
   }
 }
